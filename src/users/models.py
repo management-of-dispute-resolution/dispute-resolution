@@ -7,12 +7,12 @@ from config.settings import USER_FIELD
 
 class CustomUser(AbstractUser):
     USER = 'user'
-    PSICHOLOG = 'psicholog'
+    PSICHOLOGIST = 'psichologist'
     ADMINISTRATOR = 'admin'
 
     USER_ROLES = [
         (USER, 'user'),
-        (PSICHOLOG, 'psicholog'),
+        (PSICHOLOGIST, 'psichologist'),
         (ADMINISTRATOR, 'admin'),
     ]
     username = models.CharField(
@@ -43,6 +43,16 @@ class CustomUser(AbstractUser):
         max_length=USER_FIELD,
         blank=True
     )
+    department = models.CharField(
+        verbose_name='Отдел',
+        max_length=USER_FIELD
+    )
+    post = models.CharField(
+        blank=False,
+        null=False,
+        verbose_name='Должность',
+        max_length=USER_FIELD
+    )
     image = models.ImageField(
         # upload_to='users_images',
         blank=True,
@@ -65,13 +75,13 @@ class CustomUser(AbstractUser):
         return self.role == 'admin'
 
     @property
-    def is_psicholog(self):
-        return self.role == 'psicholog'
-
-    def __str__(self):
-        return self.username
+    def is_psichologist(self):
+        return self.role == 'psichologist'
 
     class Meta:
         ordering = ('username')
         verbose_name = 'Участник сообщества'
         verbose_name_plural = 'Участники сообщества'
+
+    def __str__(self):
+        return self.username
