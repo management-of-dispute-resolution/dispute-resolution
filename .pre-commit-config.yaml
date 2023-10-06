@@ -24,6 +24,7 @@ repos:
     rev: v2.2.1
     hooks:
     -   id: autoflake
+        args: [--remove-all-unused-imports, --remove-unused-variables]
 
 -   repo: https://github.com/PyCQA/flake8
     rev: 6.1.0
