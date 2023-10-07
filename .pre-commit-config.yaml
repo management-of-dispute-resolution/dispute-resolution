@@ -34,7 +34,6 @@ repos:
           - flake8-docstrings
         args:
         - --max-line-length=79
-        exclude: ^settings\.py$
 
 -   repo: https://github.com/pycqa/isort
     rev: 5.12.0
