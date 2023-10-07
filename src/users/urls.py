@@ -5,7 +5,7 @@ from users.views import CustomUserViewSet
 
 
 router = DefaultRouter()
-
+app_name = 'users'
 
 router.register(
     'users',
