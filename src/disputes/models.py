@@ -1,10 +1,18 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model as User
 from django.db import models
 
-User = get_user_model()
+
+class BaseModel(models.Model):
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата создания',
+    )
+
+    class Meta:
+        abstract = True
 
 
-class Dispute(models.Model):
+class Dispute(BaseModel):
     MAX_LENGTH_TITLE = 255
     MAX_LENGTH_CRITICALITY = 10
 
@@ -40,12 +48,9 @@ class Dispute(models.Model):
         through='DisputeParticipants',
         verbose_name='Участники',
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='Дата создания',
-    )
 
     class Meta:
+        abstract = False
         verbose_name = 'Спор'
         verbose_name_plural = 'Споры'
 
@@ -90,7 +95,7 @@ class DisputeParticipants(models.Model):
         return f'Спор {self.dispute}: {self.user} - {self.role}'
 
 
-class Message(models.Model):
+class Message(BaseModel):
     dispute = models.ForeignKey(
         Dispute,
         on_delete=models.CASCADE,
@@ -103,12 +108,9 @@ class Message(models.Model):
         verbose_name='Отправитель',
     )
     content = models.TextField(verbose_name='Содержание')
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='Дата создания',
-    )
 
     class Meta:
+        abstract = False
         verbose_name = 'Сообщение'
         verbose_name_plural = 'Сообщения'
 
