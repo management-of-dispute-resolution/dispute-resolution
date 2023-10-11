@@ -7,13 +7,13 @@ from config.settings import USER_FIELD
 
 class CustomUser(AbstractUser):
     USER = 'user'
-    PSICHOLOGIST = 'psichologist'
+    MEDIATOR = 'mediator'
     ADMINISTRATOR = 'admin'
 
     USER_ROLES = [
-        (USER, 'user'),
-        (PSICHOLOGIST, 'psichologist'),
-        (ADMINISTRATOR, 'admin'),
+        (USER, 'Пользователь'),
+        (MEDIATOR, 'Медиатор'),
+        (ADMINISTRATOR, 'Администратор'),
     ]
     username = models.CharField(
         max_length=USER_FIELD,
@@ -43,6 +43,14 @@ class CustomUser(AbstractUser):
         max_length=USER_FIELD,
         blank=True
     )
+    phone_number = models.CharField(
+        max_length=12,
+        unique=True,
+        validators=[RegexValidator(
+            regex=r'^\d+$',
+            message='Номер телефона может состоять только из цифр'
+        )]
+    )
     department = models.CharField(
         verbose_name='Отдел',
         max_length=USER_FIELD
@@ -52,12 +60,6 @@ class CustomUser(AbstractUser):
         null=False,
         verbose_name='Должность',
         max_length=USER_FIELD
-    )
-    image = models.ImageField(
-        # upload_to='users_images',
-        blank=True,
-        null=True,
-        verbose_name='Фото'
     )
     role = models.CharField(
         verbose_name='Роль',
@@ -75,8 +77,8 @@ class CustomUser(AbstractUser):
         return self.role == 'admin'
 
     @property
-    def is_psichologist(self):
-        return self.role == 'psichologist'
+    def is_mediator(self):
+        return self.role == 'mediator'
 
     class Meta:
         ordering = ('username')
