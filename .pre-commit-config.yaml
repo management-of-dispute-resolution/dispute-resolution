@@ -50,5 +50,7 @@ repos:
     hooks:
     -   id: isort
         args: [
+            "--profile", "black",
+            "--filter-files",
             --skip=migrations
         ]
