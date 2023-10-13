@@ -1,0 +1,4 @@
+[flake8]
+max-line-length = 79
+exclude = migrations
+extend-ignore = D100,D104,D105,D107
