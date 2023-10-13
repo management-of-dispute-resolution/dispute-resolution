@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'djoser',
     'disputes.apps.DisputesConfig',
     'users.apps.UsersConfig',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
