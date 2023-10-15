@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'djoser',
+    'drf_yasg',
     'disputes.apps.DisputesConfig',
     'users.apps.UsersConfig',
     'api.apps.ApiConfig',
@@ -111,3 +112,15 @@ USER_FIELD = 100
 # User
 
 AUTH_USER_MODEL = 'users.CustomUser'
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {'basic': {'type': 'basic'}},
+    'USE_SESSION_AUTH': False,
+    'USE_TOKEN_AUTH': True,
+    'api_version': '1.0',
+    'api_path': '/',
+    'enabled_methods': ['get', 'post', 'put', 'patch', 'delete'],
+    'api_key': '',
+    'is_authenticated': False,
+    'is_superuser': False,
+}
