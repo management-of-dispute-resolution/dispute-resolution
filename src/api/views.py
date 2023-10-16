@@ -4,11 +4,13 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ViewSet
 
+from api.serializers import (
+    CommentSerializer,
+    CustomUserSerializer,
+    DisputeSerializer,
+)
 from disputes.models import Comment, Dispute
 from users.models import CustomUser
-from users.serializers import CustomUserSerializer
-
-from .serializers import CommentSerializer, DisputeSerializer
 
 
 class CustomUserViewSet(UserViewSet):

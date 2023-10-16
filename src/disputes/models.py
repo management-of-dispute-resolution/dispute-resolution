@@ -22,25 +22,6 @@ class BaseModel(models.Model):
         abstract = True
 
 
-class Comment(BaseModel):
-    """Comment model."""
-
-    sender = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='comments',
-        verbose_name='отправитель',
-    )
-    content = models.TextField(verbose_name='Описание')
-
-    class Meta:
-        verbose_name = 'Комментарий'
-        verbose_name_plural = 'Комментарии'
-
-    def __str__(self):
-        return f'Комментарий от {self.sender}'
-
-
 class Dispute(BaseModel):
     """Dispute model."""
 
@@ -76,11 +57,6 @@ class Dispute(BaseModel):
         choices=DISPUTE_STATUS,
         verbose_name='Статус обращения',
     )
-    comment = models.ManyToManyField(
-        Comment,
-        through='CommentDispute',
-        verbose_name='Комментарии',
-    )
     opponent = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -108,22 +84,26 @@ class Dispute(BaseModel):
         return self.title
 
 
-class CommentDispute(models.Model):
-    """Аdditional model for connection dispute and comment."""
+class Comment(BaseModel):
+    """Comment model."""
 
+    sender = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name='отправитель',
+    )
+    content = models.TextField(verbose_name='Описание')
     dispute = models.ForeignKey(
         Dispute,
         on_delete=models.CASCADE,
-        verbose_name='Спор',
-        related_name='commentdisputes',
-    )
-    comment = models.ForeignKey(
-        Comment,
-        on_delete=models.CASCADE,
-        verbose_name='Комментарий',
-        related_name='commentdisputes',
+        related_name='comments',
+        verbose_name='спор',
     )
 
     class Meta:
-        verbose_name = 'Комментарий в споре'
-        verbose_name_plural = 'Комментарии в споре'
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+
+    def __str__(self):
+        return f'Комментарий от {self.sender}'

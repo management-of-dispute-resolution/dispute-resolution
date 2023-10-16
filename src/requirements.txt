@@ -18,3 +18,4 @@ tzdata==2023.3
 virtualenv==20.24.5
 psycopg2-binary
 pytz
+gunicorn==20.0.4
