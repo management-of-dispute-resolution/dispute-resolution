@@ -1,10 +1,14 @@
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from rest_framework import permissions
+from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ViewSet
 
-from api.serializers import CommentSerializer, CustomUserSerializer, DisputeSerializer
+from api.serializers import (
+    CommentSerializer,
+    CustomUserSerializer,
+    DisputeSerializer,
+)
 from disputes.models import Comment, Dispute
 from users.models import CustomUser
 
@@ -65,3 +69,21 @@ class CommentDetailViewSet(ViewSet):
         comment = get_object_or_404(Comment, pk=pk)
         serializer = CommentSerializer(comment)
         return Response(serializer.data)
+
+    def destroy(self, request, pk=None):  # нужна ли данная функция?
+        """
+        Delete a Comment instance by its primary key (ID).
+
+        Args:
+            request: The request object.
+            pk: The primary key of the comment to delete.
+
+        Returns:
+            A Response indicating the successful deletion.
+
+        Raises:
+            Http404: If the comment with the given primary key does not exist.
+        """
+        comment = get_object_or_404(Comment, pk=pk)
+        comment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

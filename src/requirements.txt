@@ -4,6 +4,7 @@ distlib==0.3.7
 Django==4.1
 djangorestframework==3.12.4
 djoser==2.2.0
+drf-yasg==1.21.7
 filelock==3.12.4
 identify==2.5.30
 nodeenv==1.8.0

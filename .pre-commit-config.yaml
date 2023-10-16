@@ -9,15 +9,16 @@ repos:
     -   id: check-merge-conflict
         exclude: ^tests/fixtures/
 
--   repo: https://github.com/psf/black
-    rev: 23.9.1
+-   repo: https://github.com/pycqa/isort
+    rev: 5.12.0
     hooks:
-    -   id: black
+    -   id: isort
         args: [
-            --line-length=79,
-            --skip-string-normalization
+            "--profile", "black",
+            "--filter-files",
+            --skip=migrations,
+            --line-length=79
         ]
-        exclude: ^migrations/
 
 -   repo: https://github.com/pre-commit/mirrors-autopep8
     rev: v2.0.4
@@ -43,14 +44,4 @@ repos:
           - flake8-docstrings
         args: [
             --config=.flake8
-        ]
-
--   repo: https://github.com/pycqa/isort
-    rev: 5.12.0
-    hooks:
-    -   id: isort
-        args: [
-            "--profile", "black",
-            "--filter-files",
-            --skip=migrations
         ]
