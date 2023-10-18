@@ -45,43 +45,29 @@ class Dispute(BaseModel):
         verbose_name='Создатель',
     )
     description = models.TextField(verbose_name='Описание')
-    title = models.CharField(
-        max_length=MAX_LENGTH_TITLE,
-        verbose_name='Заголовок',
-    )
-    edited_at = models.DateTimeField(
-        auto_now=True, verbose_name='Время изменения'
+    closed_at = models.DateTimeField(
+        verbose_name='Время закрытия',
+        blank=True,
+        null=True,
     )
     status = models.CharField(
         max_length=MAX_LENGTH_STATUS,
         choices=DISPUTE_STATUS,
         verbose_name='Статус обращения',
     )
-    opponent = models.ForeignKey(
+    opponent = models.ManyToManyField(
         User,
-        on_delete=models.CASCADE,
         related_name='disputes_opponent',
         verbose_name='Оппонент',
-    )
-    next_commentator = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-        related_name='disputes_commentator',
-        verbose_name='Следующий комментатор',
     )
     add_opponent = models.BooleanField(default=False)
 
     class Meta:
-        models.UniqueConstraint(
-            fields=['creator', 'opponent'], name='unique_users'
-        )
         verbose_name = 'Спор'
         verbose_name_plural = 'Споры'
 
     def __str__(self):
-        return self.title
+        return f'Спор от {self.creator}'
 
 
 class Comment(BaseModel):
