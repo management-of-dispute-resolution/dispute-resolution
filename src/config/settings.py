@@ -16,8 +16,7 @@ SECRET_KEY = (
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -28,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'djoser',
+    'drf_yasg',
     'disputes.apps.DisputesConfig',
     'users.apps.UsersConfig',
     'api.apps.ApiConfig',
@@ -101,8 +101,11 @@ USE_I18N = True
 USE_TZ = True
 
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -111,3 +114,16 @@ USER_FIELD = 100
 # User
 
 AUTH_USER_MODEL = 'users.CustomUser'
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {'basic': {'type': 'basic'}},
+    'USE_SESSION_AUTH': False,
+    'USE_TOKEN_AUTH': True,
+    'api_version': '1.0',
+    'api_path': '/',
+    'enabled_methods': ['get', 'post', 'put', 'patch', 'delete'],
+    'api_key': '',
+    'is_authenticated': False,
+    'is_superuser': False,
+}
+CSRF_TRUSTED_ORIGINS = ['http://*.localhost', 'http://*.127.0.0.1']
