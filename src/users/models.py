@@ -24,6 +24,13 @@ class CustomUser(AbstractUser):
         null=False,
         verbose_name='Адрес электронной почты',
     )
+
+    USERNAME_FIELD = 'email'
+
+    # USERNAME_FIELD should be a unique user identifier
+    # and should not be included in REQUIRED_FIELDS.
+    REQUIRED_FIELDS = []
+
     first_name = models.CharField(
         verbose_name='Имя', max_length=USER_FIELD, blank=True
     )
