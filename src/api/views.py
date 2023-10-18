@@ -4,6 +4,7 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ViewSet
 
+from api.permissions import IsMediatorAuthorOrOpponent
 from api.serializers import (
     CommentSerializer,
     CustomUserSerializer,
@@ -25,6 +26,7 @@ class DisputeViewSet(ModelViewSet):
 
     queryset = Dispute.objects.all()
     serializer_class = DisputeSerializer
+    permission_classes = [IsMediatorAuthorOrOpponent]
 
 
 class CommentViewSet(ModelViewSet):
