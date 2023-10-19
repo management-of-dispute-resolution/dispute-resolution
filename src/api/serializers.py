@@ -19,7 +19,8 @@ class CustomUserSerializer(UserSerializer):
         """
 
         model = CustomUser
-        fields = '__all__'
+        fields = ['email', 'password', 'first_name',
+                  'last_name', 'phone_number', 'role']
 
 
 class DisputeSerializer(serializers.ModelSerializer):

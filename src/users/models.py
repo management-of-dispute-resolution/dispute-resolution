@@ -24,6 +24,12 @@ class CustomUser(AbstractUser):
         null=False,
         verbose_name='Адрес электронной почты',
     )
+    # Change USERNAME_FIELD to 'email'
+    USERNAME_FIELD = 'email'
+
+    # Update of REQUIRED_FIELDS
+    REQUIRED_FIELDS = []
+
     first_name = models.CharField(
         verbose_name='Имя', max_length=USER_FIELD, blank=True
     )
