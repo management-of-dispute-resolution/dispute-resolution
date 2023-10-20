@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'djoser',
     'drf_yasg',
     'disputes.apps.DisputesConfig',
@@ -41,7 +42,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'api.custom_middleware.PreventRegistrationMiddleware',
+    'api.custom_middleware.PreventRegistrationMiddleware'
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -67,14 +68,20 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB'),
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('POSTGRES_DB'),
+#         'USER': os.getenv('POSTGRES_USER'),
+#         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+#         'HOST': os.getenv('DB_HOST'),
+#         'PORT': os.getenv('DB_PORT'),
+#     }
+# }
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -128,3 +135,22 @@ SWAGGER_SETTINGS = {
     'is_superuser': False,
 }
 CSRF_TRUSTED_ORIGINS = ['http://*.localhost', 'http://*.127.0.0.1']
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ]
+}
+
+DJOSER = {
+    "HIDE_USERS": False,
+    "PASSWORD_CHANGED_EMAIL_CONFIRMATION": False,
+    "LOGIN_FIELD": "email",
+    "PERMISSIONS": {
+        "user_list": ["rest_framework.permissions.AllowAny"],
+    },
+}
