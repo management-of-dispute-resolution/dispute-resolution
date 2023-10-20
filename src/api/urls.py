@@ -12,7 +12,11 @@ router = DefaultRouter()
 
 router.register('users', CustomUserViewSet, basename='users')
 router.register('disputes', DisputeViewSet)
-router.register('comments', CommentViewSet)
+router.register(
+    r'disputes/(?P<dispute_id>\d+)/comments',
+    CommentViewSet,
+    basename='comments'
+)
 
 schema_view = get_schema_view(
     openapi.Info(

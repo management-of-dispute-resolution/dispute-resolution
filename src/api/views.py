@@ -1,14 +1,17 @@
+from datetime import datetime
+
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from rest_framework import permissions, status
+from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, ViewSet
+from rest_framework.viewsets import ModelViewSet
 
-from api.permissions import IsMediatorAuthorOrOpponent
+from api.mixins import CreteListModelViewSet
 from api.serializers import (
     CommentSerializer,
     CustomUserSerializer,
     DisputeSerializer,
+    PatchDisputeSerializer,
 )
 from disputes.models import Comment, Dispute
 from users.models import CustomUser
@@ -26,10 +29,34 @@ class DisputeViewSet(ModelViewSet):
 
     queryset = Dispute.objects.all()
     serializer_class = DisputeSerializer
-    permission_classes = [IsMediatorAuthorOrOpponent]
+
+    def create(self, request, *args, **kwargs):
+        """Change the POST request for DisputeViewSet."""
+        serializer = DisputeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(creator=self.request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def partial_update(self, request, pk=None):
+        """Change the PATCH request for DisputeViewSet."""
+        dispute = Dispute.objects.get(id=pk)
+        dispute_status = request.data.get('status')
+        print('hello')
+        print(dispute_status)
+        data = request.data
+        if dispute_status == 'closed':
+            data['closed_at'] = datetime.now()
+        else:
+            dispute.closed_at = None
+        serializer = PatchDisputeSerializer(dispute, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CommentViewSet(ModelViewSet):
+class CommentViewSet(CreteListModelViewSet):
     """
     A viewset that provides CRUD operations for comments.
 
@@ -41,51 +68,15 @@ class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
+    def get_queryset(self):
+        """Change the queryset for CommentViewSet."""
+        dispute_id = self.kwargs.get('dispute_id')
+        dispute = get_object_or_404(Dispute, id=dispute_id)
+        new_queryset = dispute.comments.all()
+        return new_queryset
 
-class CommentDetailViewSet(ViewSet):
-    """
-    Retrieve a single comment by its primary key (ID).
-
-    Attributes:
-    - A list of permissions that control access to this viewset.
-    """
-
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-    def retrieve(self, request, pk=None):
-        """
-        Retrieve a Comment instance by its primary key (ID).
-
-        Args:
-            request: The request object.
-            pk: The primary key of the comment to retrieve.
-
-        Returns:
-            A Response object containing
-            the serialized Comment data.
-
-        Raises:
-            Http404: If the comment with the given
-            primary key does not exist.
-        """
-        comment = get_object_or_404(Comment, pk=pk)
-        serializer = CommentSerializer(comment)
-        return Response(serializer.data)
-
-    def destroy(self, request, pk=None):  # нужна ли данная функция?
-        """
-        Delete a Comment instance by its primary key (ID).
-
-        Args:
-            request: The request object.
-            pk: The primary key of the comment to delete.
-
-        Returns:
-            A Response indicating the successful deletion.
-
-        Raises:
-            Http404: If the comment with the given primary key does not exist.
-        """
-        comment = get_object_or_404(Comment, pk=pk)
-        comment.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def perform_create(self, serializer):
+        """Change the POST request for CommentViewSet."""
+        dispute_id = self.kwargs.get('dispute_id')
+        dispute = get_object_or_404(Dispute, id=dispute_id)
+        serializer.save(sender=self.request.user, dispute=dispute)

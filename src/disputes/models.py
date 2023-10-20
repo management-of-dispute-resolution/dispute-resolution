@@ -28,7 +28,7 @@ class Dispute(BaseModel):
     MAX_LENGTH_TITLE = 50
     MAX_LENGTH_STATUS = 20
 
-    STARTED = 'stated'
+    STARTED = 'started'
     CLOSED = 'closed'
     NOT_STARTED = 'not_started'
 
@@ -53,6 +53,7 @@ class Dispute(BaseModel):
     status = models.CharField(
         max_length=MAX_LENGTH_STATUS,
         choices=DISPUTE_STATUS,
+        default=NOT_STARTED,
         verbose_name='Статус обращения',
     )
     opponent = models.ManyToManyField(
