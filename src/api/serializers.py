@@ -23,23 +23,6 @@ class CustomUserSerializer(UserSerializer):
                   'last_name', 'phone_number', 'role']
 
 
-class DisputeSerializer(serializers.ModelSerializer):
-    """Serializer for the Dispute model."""
-
-    class Meta:
-        """
-        Meta class DisputetSerializer.
-
-        Attributes:
-            model: The Dispute model class to be serialized.
-            fields: A string indicating to include all fields
-            from the Dispute model.
-        """
-
-        model = Dispute
-        fields = '__all__'
-
-
 class CommentSerializer(serializers.ModelSerializer):
     """Serializer for the Comment model."""
 
@@ -54,4 +37,76 @@ class CommentSerializer(serializers.ModelSerializer):
         """
 
         model = Comment
-        fields = '__all__'
+        fields = ('id', 'sender', 'content', 'dispute', 'created_at', 'file')
+        read_only_fields = ('sender', 'dispute', 'created_at')
+
+
+class DisputeSerializer(serializers.ModelSerializer):
+    """Serializer for the Dispute model."""
+
+    class Meta:
+        """
+        Meta class DisputetSerializer.
+
+        Attributes:
+            model: The Dispute model class to be serialized.
+            fields: A string indicating to include all fields
+            from the Dispute model.
+        """
+
+        model = Dispute
+        fields = (
+            'id',
+            'creator',
+            'description',
+            'created_at',
+            'file',
+            'closed_at',
+            'opponent',
+            'add_opponent',
+            'status',
+            'comments'
+        )
+        read_only_fields = (
+            'creator',
+            'created_at',
+            'closed_at',
+            'status',
+            'add_opponent'
+            'status',
+            'comments'
+        )
+
+
+class PatchDisputeSerializer(serializers.ModelSerializer):
+    """Serializer for PATCH request of the Dispute model."""
+
+    class Meta:
+        """
+        Meta class DisputetSerializer.
+
+        Attributes:
+            model: The Dispute model class to be serialized.
+            fields: A string indicating to include all fields
+            from the Dispute model.
+        """
+
+        model = Dispute
+        fields = (
+            'id',
+            'creator',
+            'description',
+            'created_at',
+            'file',
+            'closed_at',
+            'opponent',
+            'add_opponent',
+            'status',
+            'comments'
+        )
+        read_only_fields = (
+            'creator',
+            'created_at',
+            'closed_at',
+            'comments'
+        )
