@@ -175,6 +175,16 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         """Check the role 'mediator'."""
         return self.role == 'mediator'
 
+    @property
+    def is_author(self):
+        """Check if it is an author of the dispute."""
+        return self.role == 'user'
+
+    @property
+    def is_opponent(self):
+        """Check if it is an opponent of the dispute."""
+        return self.role == 'opponent'
+
     class Meta:
         ordering = ('email',)
         verbose_name = 'Участник сообщества'
