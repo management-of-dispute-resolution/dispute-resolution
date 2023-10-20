@@ -4,11 +4,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from rest_framework.routers import DefaultRouter
 
-from .views import (  # CommentDetailViewSet,
-    CommentViewSet,
-    CustomUserViewSet,
-    DisputeViewSet,
-)
+from .views import CommentViewSet, CustomUserViewSet, DisputeViewSet
 
 app_name = 'api'
 
@@ -32,14 +28,9 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    # path(
-    #     'api/comments/<int:pk>/',
-    #     CommentDetailViewSet.as_view(),
-    #     name='comment-detail',
-    # ),
-    path('', include(router.urls)),
-    path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
+    path('', include(router.urls)),
+    path('auth/', include('djoser.urls')),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$',
             schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger',
