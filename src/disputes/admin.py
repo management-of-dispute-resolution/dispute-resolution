@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Comment, Dispute
+
+admin.site.register(Dispute)
+admin.site.register(Comment)
