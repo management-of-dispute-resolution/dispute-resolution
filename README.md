@@ -55,22 +55,22 @@ DB_PORT=5432
 cd infra/
 ```
 ```
-docker-compose up -d
+docker compose up -d
 ```
 
 4. Выполнить миграции:
 ```
-docker-compose exec backend python manage.py migrate
+docker compose exec backend python manage.py migrate
 ```
 
 5. Создать суперюзера:
 ```
-docker-compose exec backend python manage.py createsuperuser
+docker compose exec backend python manage.py createsuperuser
 ```
 
 6. Собрать статику:
 ```
-docker-compose exec backend python manage.py collectstatic --no-input
+docker compose exec backend python manage.py collectstatic --no-input
 ```
 
 7. После успешного запуска проект станет доступен по адресу:
@@ -78,10 +78,10 @@ http://localhost/
 
 8. Остановить проект:
 ```
-docker-compose down
+docker compose down
 ```
 
 9. Если необходимо пересобрать контейнеры после изменений в проекте:
 ```
-docker-compose up -d --build
+docker compose up -d --build
 ```
