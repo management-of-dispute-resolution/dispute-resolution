@@ -1,3 +1,4 @@
+
 version: '3.8'
 
 services:
@@ -13,7 +14,7 @@ services:
     build: ../.
     restart: always
     volumes:
-      - static_value:/app/static/
+      - static_value:/backend_static
       - media_value:/app/media/
     depends_on:
       - db
