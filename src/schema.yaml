@@ -1,11 +1,11 @@
 openapi: 3.0.2
 info:
-  title: ''
-  version: ''
+  title: 'Приложение для решение споров и конфликтов среди сотрудников'
+  version: 'v1'
 paths:
   /api/users/:
     get:
-      operationId: listCustomUsers
+      operationId: Список пользователей
       description: A viewset that provides CRUD operations for users.
       parameters: []
       responses:
@@ -18,9 +18,9 @@ paths:
                   $ref: '#/components/schemas/CustomUser'
           description: ''
       tags:
-      - api
+      - Пользователи
     post:
-      operationId: createCustomUser
+      operationId: Создание пользователя
       description: A viewset that provides CRUD operations for users.
       parameters: []
       requestBody:
@@ -42,10 +42,10 @@ paths:
                 $ref: '#/components/schemas/UserCreate'
           description: ''
       tags:
-      - api
+      - Пользователи
   /api/users/me/:
     get:
-      operationId: meCustomUser
+      operationId: Своя личная страница 
       description: A viewset that provides CRUD operations for users.
       parameters: []
       responses:
@@ -56,67 +56,10 @@ paths:
                 $ref: '#/components/schemas/User'
           description: ''
       tags:
-      - api
-    put:
-      operationId: meCustomUser
-      description: A viewset that provides CRUD operations for users.
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-          description: ''
-      tags:
-      - api
-    patch:
-      operationId: meCustomUser
-      description: A viewset that provides CRUD operations for users.
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-          description: ''
-      tags:
-      - api
-    delete:
-      operationId: meCustomUser
-      description: A viewset that provides CRUD operations for users.
-      parameters: []
-      responses:
-        '204':
-          description: ''
-      tags:
-      - api
+      - Пользователи
   /api/users/{id}/:
     get:
-      operationId: retrieveCustomUser
+      operationId: Страница конкретного пользователя
       description: A viewset that provides CRUD operations for users.
       parameters:
       - name: id
@@ -135,91 +78,10 @@ paths:
                 $ref: '#/components/schemas/CustomUser'
           description: ''
       tags:
-      - api
-    put:
-      operationId: updateCustomUser
-      description: A viewset that provides CRUD operations for users.
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: "A unique integer value identifying this \u0423\u0447\u0430\u0441\
-          \u0442\u043D\u0438\u043A \u0441\u043E\u043E\u0431\u0449\u0435\u0441\u0442\
-          \u0432\u0430."
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CustomUser'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/CustomUser'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/CustomUser'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomUser'
-          description: ''
-      tags:
-      - api
-    patch:
-      operationId: partialUpdateCustomUser
-      description: A viewset that provides CRUD operations for users.
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: "A unique integer value identifying this \u0423\u0447\u0430\u0441\
-          \u0442\u043D\u0438\u043A \u0441\u043E\u043E\u0431\u0449\u0435\u0441\u0442\
-          \u0432\u0430."
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CustomUser'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/CustomUser'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/CustomUser'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomUser'
-          description: ''
-      tags:
-      - api
-    delete:
-      operationId: destroyCustomUser
-      description: A viewset that provides CRUD operations for users.
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: "A unique integer value identifying this \u0423\u0447\u0430\u0441\
-          \u0442\u043D\u0438\u043A \u0441\u043E\u043E\u0431\u0449\u0435\u0441\u0442\
-          \u0432\u0430."
-        schema:
-          type: string
-      responses:
-        '204':
-          description: ''
-      tags:
-      - api
+      - Пользователи
   /api/disputes/:
     get:
-      operationId: listDisputes
+      operationId: Страница всех споров и конфликтов
       description: A viewset that provides CRUD operations for disputes.
       parameters: []
       responses:
@@ -232,9 +94,9 @@ paths:
                   $ref: '#/components/schemas/Dispute'
           description: ''
       tags:
-      - api
+      - Конфликты
     post:
-      operationId: createDispute
+      operationId: Создание спора
       description: Change the POST request for DisputeViewSet.
       parameters: []
       requestBody:
@@ -256,10 +118,10 @@ paths:
                 $ref: '#/components/schemas/Dispute'
           description: ''
       tags:
-      - api
+      - Конфликты
   /api/disputes/{id}/:
     get:
-      operationId: retrieveDispute
+      operationId: Страница конкретного спора
       description: A viewset that provides CRUD operations for disputes.
       parameters:
       - name: id
@@ -277,9 +139,9 @@ paths:
                 $ref: '#/components/schemas/Dispute'
           description: ''
       tags:
-      - api
+      - Конфликты
     put:
-      operationId: updateDispute
+      operationId: Полное измение полей конфликта
       description: A viewset that provides CRUD operations for disputes.
       parameters:
       - name: id
@@ -308,9 +170,9 @@ paths:
                 $ref: '#/components/schemas/Dispute'
           description: ''
       tags:
-      - api
+      - Конфликты
     patch:
-      operationId: partialUpdateDispute
+      operationId: Частичное изменеие полей конфликта
       description: Change the PATCH request for DisputeViewSet.
       parameters:
       - name: id
@@ -339,9 +201,9 @@ paths:
                 $ref: '#/components/schemas/Dispute'
           description: ''
       tags:
-      - api
+      - Конфликты
     delete:
-      operationId: destroyDispute
+      operationId: Удаление конфликта
       description: A viewset that provides CRUD operations for disputes.
       parameters:
       - name: id
@@ -355,10 +217,10 @@ paths:
         '204':
           description: ''
       tags:
-      - api
+      - Конфликты
   /api/disputes/{dispute_id}/comments/:
     get:
-      operationId: listComments
+      operationId: Все комментарии к спору
       description: "A viewset that provides CRUD operations for comments.\n\n    Attributes:\n\
         \    A queryset that retrieves all Comment instances.\n    The serializer\
         \ class used for Comment instances."
@@ -379,9 +241,9 @@ paths:
                   $ref: '#/components/schemas/Comment'
           description: ''
       tags:
-      - api
+      - Комментарии к конфликту
     post:
-      operationId: createComment
+      operationId: Создание комментария
       description: "A viewset that provides CRUD operations for comments.\n\n    Attributes:\n\
         \    A queryset that retrieves all Comment instances.\n    The serializer\
         \ class used for Comment instances."
@@ -411,221 +273,7 @@ paths:
                 $ref: '#/components/schemas/Comment'
           description: ''
       tags:
-      - api
-  /api/auth/users/:
-    get:
-      operationId: listCustomUsers
-      description: ''
-      parameters: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
-          description: ''
-      tags:
-      - api
-    post:
-      operationId: createCustomUser
-      description: ''
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserCreate'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UserCreate'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/UserCreate'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserCreate'
-          description: ''
-      tags:
-      - api
-  /api/auth/users/me/:
-    get:
-      operationId: meCustomUser
-      description: ''
-      parameters: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-          description: ''
-      tags:
-      - api
-    put:
-      operationId: meCustomUser
-      description: ''
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-          description: ''
-      tags:
-      - api
-    patch:
-      operationId: meCustomUser
-      description: ''
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-          description: ''
-      tags:
-      - api
-    delete:
-      operationId: meCustomUser
-      description: ''
-      parameters: []
-      responses:
-        '204':
-          description: ''
-      tags:
-      - api
-  /api/auth/users/{id}/:
-    get:
-      operationId: retrieveCustomUser
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: "A unique integer value identifying this \u0423\u0447\u0430\u0441\
-          \u0442\u043D\u0438\u043A \u0441\u043E\u043E\u0431\u0449\u0435\u0441\u0442\
-          \u0432\u0430."
-        schema:
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-          description: ''
-      tags:
-      - api
-    put:
-      operationId: updateCustomUser
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: "A unique integer value identifying this \u0423\u0447\u0430\u0441\
-          \u0442\u043D\u0438\u043A \u0441\u043E\u043E\u0431\u0449\u0435\u0441\u0442\
-          \u0432\u0430."
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-          description: ''
-      tags:
-      - api
-    patch:
-      operationId: partialUpdateCustomUser
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: "A unique integer value identifying this \u0423\u0447\u0430\u0441\
-          \u0442\u043D\u0438\u043A \u0441\u043E\u043E\u0431\u0449\u0435\u0441\u0442\
-          \u0432\u0430."
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-          description: ''
-      tags:
-      - api
-    delete:
-      operationId: destroyCustomUser
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: "A unique integer value identifying this \u0423\u0447\u0430\u0441\
-          \u0442\u043D\u0438\u043A \u0441\u043E\u043E\u0431\u0449\u0435\u0441\u0442\
-          \u0432\u0430."
-        schema:
-          type: string
-      responses:
-        '204':
-          description: ''
-      tags:
-      - api
+      - Комментарии к конфликту
   /api/auth/token/login/:
     post:
       operationId: createTokenCreate
@@ -650,7 +298,7 @@ paths:
                 $ref: '#/components/schemas/TokenCreate'
           description: ''
       tags:
-      - api
+      - Пользователи
   /api/auth/token/logout/:
     post:
       operationId: createTokenDestroy
@@ -671,157 +319,7 @@ paths:
               schema: {}
           description: ''
       tags:
-      - api
-  /api/users/activation/:
-    post:
-      operationId: activationCustomUser
-      description: A viewset that provides CRUD operations for users.
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Activation'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Activation'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Activation'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Activation'
-          description: ''
-      tags:
-      - api
-  /api/users/resend_activation/:
-    post:
-      operationId: resendActivationCustomUser
-      description: A viewset that provides CRUD operations for users.
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SendEmailReset'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/SendEmailReset'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/SendEmailReset'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SendEmailReset'
-          description: ''
-      tags:
-      - api
-  /api/users/reset_password/:
-    post:
-      operationId: resetPasswordCustomUser
-      description: A viewset that provides CRUD operations for users.
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SendEmailReset'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/SendEmailReset'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/SendEmailReset'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SendEmailReset'
-          description: ''
-      tags:
-      - api
-  /api/users/reset_password_confirm/:
-    post:
-      operationId: resetPasswordConfirmCustomUser
-      description: A viewset that provides CRUD operations for users.
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PasswordResetConfirm'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PasswordResetConfirm'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PasswordResetConfirm'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PasswordResetConfirm'
-          description: ''
-      tags:
-      - api
-  /api/users/reset_email/:
-    post:
-      operationId: resetUsernameCustomUser
-      description: A viewset that provides CRUD operations for users.
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SendEmailReset'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/SendEmailReset'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/SendEmailReset'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SendEmailReset'
-          description: ''
-      tags:
-      - api
-  /api/users/reset_email_confirm/:
-    post:
-      operationId: resetUsernameConfirmCustomUser
-      description: A viewset that provides CRUD operations for users.
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UsernameResetConfirm'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UsernameResetConfirm'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/UsernameResetConfirm'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UsernameResetConfirm'
-          description: ''
-      tags:
-      - api
+      - Пользователи
   /api/users/set_password/:
     post:
       operationId: setPasswordCustomUser
@@ -846,232 +344,7 @@ paths:
                 $ref: '#/components/schemas/SetPassword'
           description: ''
       tags:
-      - api
-  /api/users/set_email/:
-    post:
-      operationId: setUsernameCustomUser
-      description: A viewset that provides CRUD operations for users.
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SetUsername'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/SetUsername'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/SetUsername'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SetUsername'
-          description: ''
-      tags:
-      - api
-  /api/auth/users/activation/:
-    post:
-      operationId: activationCustomUser
-      description: ''
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Activation'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Activation'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Activation'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Activation'
-          description: ''
-      tags:
-      - api
-  /api/auth/users/resend_activation/:
-    post:
-      operationId: resendActivationCustomUser
-      description: ''
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SendEmailReset'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/SendEmailReset'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/SendEmailReset'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SendEmailReset'
-          description: ''
-      tags:
-      - api
-  /api/auth/users/reset_password/:
-    post:
-      operationId: resetPasswordCustomUser
-      description: ''
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SendEmailReset'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/SendEmailReset'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/SendEmailReset'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SendEmailReset'
-          description: ''
-      tags:
-      - api
-  /api/auth/users/reset_password_confirm/:
-    post:
-      operationId: resetPasswordConfirmCustomUser
-      description: ''
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PasswordResetConfirm'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PasswordResetConfirm'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PasswordResetConfirm'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PasswordResetConfirm'
-          description: ''
-      tags:
-      - api
-  /api/auth/users/reset_email/:
-    post:
-      operationId: resetUsernameCustomUser
-      description: ''
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SendEmailReset'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/SendEmailReset'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/SendEmailReset'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SendEmailReset'
-          description: ''
-      tags:
-      - api
-  /api/auth/users/reset_email_confirm/:
-    post:
-      operationId: resetUsernameConfirmCustomUser
-      description: ''
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UsernameResetConfirm'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UsernameResetConfirm'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/UsernameResetConfirm'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UsernameResetConfirm'
-          description: ''
-      tags:
-      - api
-  /api/auth/users/set_password/:
-    post:
-      operationId: setPasswordCustomUser
-      description: ''
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SetPassword'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/SetPassword'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/SetPassword'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SetPassword'
-          description: ''
-      tags:
-      - api
-  /api/auth/users/set_email/:
-    post:
-      operationId: setUsernameCustomUser
-      description: ''
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SetUsername'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/SetUsername'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/SetUsername'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SetUsername'
-          description: ''
-      tags:
-      - api
+      - Пользователи
 components:
   schemas:
     CustomUser:
