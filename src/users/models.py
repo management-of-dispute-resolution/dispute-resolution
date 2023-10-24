@@ -129,10 +129,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
 
     first_name = models.CharField(
-        verbose_name='Имя', max_length=USER_FIELD, blank=True
+        verbose_name='Имя', max_length=USER_FIELD
     )
     last_name = models.CharField(
-        verbose_name='Фамилия', max_length=USER_FIELD, blank=True
+        verbose_name='Фамилия', max_length=USER_FIELD
     )
     phone_number = models.CharField(
         max_length=12,
