@@ -14,7 +14,7 @@ services:
     build: ../.
     restart: always
     volumes:
-      - static_value:/backend_static
+      - static_value:/app/static/
       - media_value:/app/media/
     depends_on:
       - db
