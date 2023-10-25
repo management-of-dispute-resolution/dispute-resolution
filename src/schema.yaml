@@ -1,0 +1,565 @@
+openapi: 3.0.2
+info:
+  title: 'Приложение для решение споров и конфликтов среди сотрудников'
+  version: 'v1'
+paths:
+  /api/users/:
+    get:
+      operationId: Список пользователей
+      description: A viewset that provides CRUD operations for users.
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomUser'
+          description: ''
+      tags:
+      - Пользователи
+    post:
+      operationId: Создание пользователя
+      description: A viewset that provides CRUD operations for users.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreate'
+          description: ''
+      tags:
+      - Пользователи
+  /api/users/me/:
+    get:
+      operationId: Своя личная страница 
+      description: A viewset that provides CRUD operations for users.
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+      tags:
+      - Пользователи
+  /api/users/{id}/:
+    get:
+      operationId: Страница конкретного пользователя
+      description: A viewset that provides CRUD operations for users.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A unique integer value identifying this \u0423\u0447\u0430\u0441\
+          \u0442\u043D\u0438\u043A \u0441\u043E\u043E\u0431\u0449\u0435\u0441\u0442\
+          \u0432\u0430."
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
+      tags:
+      - Пользователи
+  /api/disputes/:
+    get:
+      operationId: Страница всех споров и конфликтов
+      description: A viewset that provides CRUD operations for disputes.
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dispute'
+          description: ''
+      tags:
+      - Конфликты
+    post:
+      operationId: Создание спора
+      description: Change the POST request for DisputeViewSet.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dispute'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Dispute'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Dispute'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dispute'
+          description: ''
+      tags:
+      - Конфликты
+  /api/disputes/{id}/:
+    get:
+      operationId: Страница конкретного спора
+      description: A viewset that provides CRUD operations for disputes.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A unique integer value identifying this \u0421\u043F\u043E\u0440\
+          ."
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dispute'
+          description: ''
+      tags:
+      - Конфликты
+    put:
+      operationId: Полное измение полей конфликта
+      description: A viewset that provides CRUD operations for disputes.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A unique integer value identifying this \u0421\u043F\u043E\u0440\
+          ."
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dispute'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Dispute'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Dispute'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dispute'
+          description: ''
+      tags:
+      - Конфликты
+    patch:
+      operationId: Частичное изменеие полей конфликта
+      description: Change the PATCH request for DisputeViewSet.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A unique integer value identifying this \u0421\u043F\u043E\u0440\
+          ."
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dispute'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Dispute'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Dispute'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dispute'
+          description: ''
+      tags:
+      - Конфликты
+    delete:
+      operationId: Удаление конфликта
+      description: A viewset that provides CRUD operations for disputes.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A unique integer value identifying this \u0421\u043F\u043E\u0440\
+          ."
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - Конфликты
+  /api/disputes/{dispute_id}/comments/:
+    get:
+      operationId: Все комментарии к спору
+      description: "A viewset that provides CRUD operations for comments.\n\n    Attributes:\n\
+        \    A queryset that retrieves all Comment instances.\n    The serializer\
+        \ class used for Comment instances."
+      parameters:
+      - name: dispute_id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+          description: ''
+      tags:
+      - Комментарии к конфликту
+    post:
+      operationId: Создание комментария
+      description: "A viewset that provides CRUD operations for comments.\n\n    Attributes:\n\
+        \    A queryset that retrieves all Comment instances.\n    The serializer\
+        \ class used for Comment instances."
+      parameters:
+      - name: dispute_id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Comment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Comment'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: ''
+      tags:
+      - Комментарии к конфликту
+  /api/auth/token/login/:
+    post:
+      operationId: createTokenCreate
+      description: Use this endpoint to obtain user authentication token.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenCreate'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenCreate'
+          description: ''
+      tags:
+      - Пользователи
+  /api/auth/token/logout/:
+    post:
+      operationId: createTokenDestroy
+      description: Use this endpoint to logout user (remove user authentication token).
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema: {}
+          application/x-www-form-urlencoded:
+            schema: {}
+          multipart/form-data:
+            schema: {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema: {}
+          description: ''
+      tags:
+      - Пользователи
+  /api/users/set_password/:
+    post:
+      operationId: setPasswordCustomUser
+      description: A viewset that provides CRUD operations for users.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetPassword'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SetPassword'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SetPassword'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SetPassword'
+          description: ''
+      tags:
+      - Пользователи
+components:
+  schemas:
+    CustomUser:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 100
+        password:
+          type: string
+          maxLength: 128
+        first_name:
+          type: string
+          maxLength: 100
+        last_name:
+          type: string
+          maxLength: 100
+        phone_number:
+          type: string
+          pattern: ^\d+$
+          maxLength: 12
+        role:
+          enum:
+          - user
+          - mediator
+          - admin
+          type: string
+      required:
+      - email
+      - password
+      - phone_number
+    User:
+      type: object
+      properties:
+        first_name:
+          type: string
+          maxLength: 100
+        last_name:
+          type: string
+          maxLength: 100
+        phone_number:
+          type: string
+          pattern: ^\d+$
+          maxLength: 12
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          readOnly: true
+      required:
+      - phone_number
+    Dispute:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        creator:
+          type: string
+          readOnly: true
+        description:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        file:
+          type: string
+          format: binary
+          nullable: true
+        closed_at:
+          type: string
+          format: date-time
+          readOnly: true
+        opponent:
+          type: array
+          items:
+            type: integer
+        add_opponent:
+          type: boolean
+        status:
+          enum:
+          - started
+          - closed
+          - not_started
+          type: string
+          readOnly: true
+        comments:
+          type: array
+          items:
+            type: string
+          readOnly: true
+      required:
+      - description
+      - opponent
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        sender:
+          type: string
+          readOnly: true
+        content:
+          type: string
+        dispute:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        file:
+          type: string
+          format: binary
+          nullable: true
+      required:
+      - content
+    TokenCreate:
+      type: object
+      properties:
+        password:
+          type: string
+        email:
+          type: string
+    UserCreate:
+      type: object
+      properties:
+        first_name:
+          type: string
+          maxLength: 100
+        last_name:
+          type: string
+          maxLength: 100
+        phone_number:
+          type: string
+          pattern: ^\d+$
+          maxLength: 12
+        email:
+          type: string
+          format: email
+          maxLength: 100
+        id:
+          type: integer
+          readOnly: true
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - phone_number
+      - email
+      - password
+    Activation:
+      type: object
+      properties:
+        uid:
+          type: string
+        token:
+          type: string
+      required:
+      - uid
+      - token
+    SendEmailReset:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+      - email
+    PasswordResetConfirm:
+      type: object
+      properties:
+        uid:
+          type: string
+        token:
+          type: string
+        new_password:
+          type: string
+      required:
+      - uid
+      - token
+      - new_password
+    UsernameResetConfirm:
+      type: object
+      properties:
+        new_email:
+          type: string
+          format: email
+          maxLength: 100
+      required:
+      - new_email
+    SetPassword:
+      type: object
+      properties:
+        new_password:
+          type: string
+        current_password:
+          type: string
+      required:
+      - new_password
+      - current_password
+    SetUsername:
+      type: object
+      properties:
+        current_password:
+          type: string
+        new_email:
+          type: string
+          format: email
+          maxLength: 100
+      required:
+      - current_password
+      - new_email
