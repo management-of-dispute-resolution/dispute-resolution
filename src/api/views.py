@@ -27,8 +27,18 @@ class CustomUserViewSet(UserViewSet):
 class DisputeViewSet(ModelViewSet):
     """A viewset that provides CRUD operations for disputes."""
 
-    queryset = Dispute.objects.all()
     serializer_class = DisputeSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.is_mediator:
+            return Dispute.objects.all()
+        elif user.is_authenticated:
+            return (user.disputes_creator.all()
+                    | user.disputes_opponent.filter(add_opponent=True))
+        else:
+            return Dispute.objects.none()
 
     def create(self, request, *args, **kwargs):
         """Change the POST request for DisputeViewSet."""
@@ -42,8 +52,6 @@ class DisputeViewSet(ModelViewSet):
         """Change the PATCH request for DisputeViewSet."""
         dispute = Dispute.objects.get(id=pk)
         dispute_status = request.data.get('status')
-        print('hello')
-        print(dispute_status)
         data = request.data
         if dispute_status == 'closed':
             data['closed_at'] = datetime.now()
