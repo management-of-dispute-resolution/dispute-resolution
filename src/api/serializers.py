@@ -44,6 +44,8 @@ class CommentSerializer(serializers.ModelSerializer):
 class DisputeSerializer(serializers.ModelSerializer):
     """Serializer for the Dispute model."""
 
+    last_comment = serializers.SerializerMethodField()
+
     class Meta:
         """
         Meta class DisputetSerializer.
@@ -65,7 +67,8 @@ class DisputeSerializer(serializers.ModelSerializer):
             'opponent',
             'add_opponent',
             'status',
-            'comments'
+            'comments',
+            'last_comment',
         )
         read_only_fields = (
             'creator',
@@ -74,8 +77,15 @@ class DisputeSerializer(serializers.ModelSerializer):
             'status',
             'add_opponent'
             'status',
-            'comments'
+            'comments',
+            'last_comment',
         )
+
+    def get_last_comment(self, obj):
+        last_comment = obj.comments.last()  # Получаем последний комментарий
+        if last_comment:
+            return CommentSerializer(last_comment).data
+        return None
 
 
 class PatchDisputeSerializer(serializers.ModelSerializer):
