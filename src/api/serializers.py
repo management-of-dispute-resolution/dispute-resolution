@@ -19,7 +19,7 @@ class CustomUserSerializer(UserSerializer):
         """
 
         model = CustomUser
-        fields = ['email', 'password', 'first_name',
+        fields = ['email', 'id', 'first_name',
                   'last_name', 'phone_number', 'role']
 
 
@@ -82,6 +82,7 @@ class DisputeSerializer(serializers.ModelSerializer):
         )
 
     def get_last_comment(self, obj):
+        """Get the last comment."""
         last_comment = obj.comments.last()  # Получаем последний комментарий
         if last_comment:
             return CommentSerializer(last_comment).data
