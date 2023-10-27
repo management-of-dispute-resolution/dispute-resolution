@@ -37,7 +37,7 @@ class CommentSerializer(serializers.ModelSerializer):
         """
 
         model = Comment
-        fields = ('id', 'sender', 'content', 'dispute', 'created_at', 'file')
+        fields = ('id', 'sender', 'content', 'dispute', 'created_at')
         read_only_fields = ('sender', 'dispute', 'created_at')
 
 
@@ -103,26 +103,18 @@ class DisputeSerializer(serializers.ModelSerializer):
         return None
 
     def create(self, validated_data):
-        print('hellooo')
-        print(validated_data)
         uploaded_files = validated_data.pop('uploaded_files', None)
         opponent = validated_data.pop('opponent', None)
-        user_custom = validated_data.get('creator')
-        opponents = [opponent, user_custom]
-        print('rrrrrrrrrr')
         dispute = Dispute.objects.create(**validated_data)
-        print('ddddddddddddddddd')
         if uploaded_files:
-            print(uploaded_files)
             for file in uploaded_files:
                 FileDispute.objects.create(
                     dispute=dispute,
                     file=file
                 )
-        if opponents:
-            dispute.opponent.add(*opponents)
+        if opponent:
+            dispute.opponent.add(*opponent)
             dispute.save()
-        print('jjjjjjjjjjjj')
         return dispute
 
 

@@ -33,7 +33,6 @@ class DisputeViewSet(ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        print('hieeeeeeeee')
 
         if user.is_mediator:
             return Dispute.objects.all()
@@ -45,17 +44,9 @@ class DisputeViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Change the POST request for DisputeViewSet."""
-        print('h1333333333333')
-        print(dir(request))
-        print(request.data)
         serializer = DisputeSerializer(data=request.data)
-        print('11111111111111111111')
         if serializer.is_valid():
-            print(444444444)
-            user1 = CustomUser.objects.get(id=1)
-            print(user1)
-            serializer.save(creator=self.request.user, opponent=user1)
-            print(66666666666666)
+            serializer.save(creator=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
