@@ -42,6 +42,12 @@ class DisputeViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Change the POST request for DisputeViewSet."""
+        opponent_ids = request.data.get('opponent', [])
+        if request.user.id in opponent_ids:
+            return Response(
+                {'opponent': ['Вы не можете указать себя как оппонента.']},
+                status=status.HTTP_400_BAD_REQUEST)
+
         serializer = DisputeSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(creator=self.request.user)
