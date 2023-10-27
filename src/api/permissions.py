@@ -1,24 +1,29 @@
 from rest_framework import permissions
 
 
-class IsMediatorAuthorOrOpponent(permissions.BasePermission):
-    """This class checks whether a user is a mediator, author, or opponent."""
+class IsAuthorOrMediatorOrReadOnly(permissions.BasePermission):
+    """
+    Permission rule based on authorship or mediator status.
 
-    def has_permission(self, request, view):
+    Allows authors to modify and delete objects,
+    mediators to perform any actions,
+    and other users to perform only safe methods (GET, HEAD, OPTIONS).
+    """
+
+    def has_object_permission(self, request, view, obj):
         """
-        Check if the user has permission to access the view.
+        Check whether the user has permission to access the object.
 
-        Args:
-            request (HttpRequest): The request object.
-            view (View): The view to be accessed.
+        Parameters:
+        - request: The request object.
+        - view: The view object.
+        - obj: The object the request is made to.
 
         Returns:
-            bool: True if the user is a mediator,
-            author, or opponent, and False otherwise.
+        - bool: True if the user has permission, otherwise False.
         """
-        if request.user.is_authenticated:
-            return (
-                request.user.is_mediator or
-                request.user.is_author or
-                request.user.is_opponent
-            )
+        return (
+            obj.author == request.user
+            or request.method in permissions.SAFE_METHODS
+            or request.user.is_mediator
+        )
