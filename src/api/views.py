@@ -16,6 +16,8 @@ from api.serializers import (
 from disputes.models import Comment, Dispute
 from users.models import CustomUser
 
+from .permissions import IsAuthorOrMediatorOrReadOnly
+
 
 class CustomUserViewSet(UserViewSet):
     """A viewset that provides CRUD operations for users."""
@@ -28,8 +30,14 @@ class DisputeViewSet(ModelViewSet):
     """A viewset that provides CRUD operations for disputes."""
 
     serializer_class = DisputeSerializer
+    permission_classes = (IsAuthorOrMediatorOrReadOnly,)
 
     def get_queryset(self):
+        """
+        Get the queryset of disputes.
+
+        Based on the user's role and authentication status.
+        """
         user = self.request.user
 
         if user.is_mediator:
