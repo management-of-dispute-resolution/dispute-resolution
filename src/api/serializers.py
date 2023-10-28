@@ -1,7 +1,7 @@
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
-from disputes.models import Comment, Dispute, FileDispute
+from disputes.models import Comment, Dispute, FileComment, FileDispute
 from users.models import CustomUser
 
 
@@ -23,8 +23,23 @@ class CustomUserSerializer(UserSerializer):
                   'last_name', 'phone_number', 'role']
 
 
+class FileCommentSerializer(serializers.ModelSerializer):
+    """Serializer for the File in comment."""
+
+    class Meta:
+        model = FileComment
+        fields = "__all__"
+
+
 class CommentSerializer(serializers.ModelSerializer):
     """Serializer for the Comment model."""
+
+    file = FileCommentSerializer(many=True, read_only=True)
+    uploaded_files = serializers.ListField(
+        child=serializers.FileField(allow_empty_file=False, use_url=False),
+        write_only=True,
+        required=False
+    )
 
     class Meta:
         """
@@ -37,8 +52,21 @@ class CommentSerializer(serializers.ModelSerializer):
         """
 
         model = Comment
-        fields = ('id', 'sender', 'content', 'dispute', 'created_at')
+        fields = ('id', 'sender', 'file', 'uploaded_files',
+                  'content', 'dispute', 'created_at')
         read_only_fields = ('sender', 'dispute', 'created_at')
+
+    def create(self, validated_data):
+        """Create the comment."""
+        uploaded_files = validated_data.pop('uploaded_files', None)
+        comment = Comment.objects.create(**validated_data)
+        if uploaded_files:
+            for file in uploaded_files:
+                FileComment.objects.create(
+                    comment=comment,
+                    file=file
+                )
+        return comment
 
 
 class FileDisputeSerializer(serializers.ModelSerializer):
@@ -59,6 +87,7 @@ class DisputeSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False
     )
+    comments = CommentSerializer(many=True, read_only=True)
 
     class Meta:
         """
