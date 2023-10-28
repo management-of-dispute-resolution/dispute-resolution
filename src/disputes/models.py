@@ -90,14 +90,9 @@ class Comment(BaseModel):
         return f'Комментарий от {self.sender}'
 
 
-class FileDispute(models.Model):
-    """File of dispute model."""
+class File(models.Model):
+    """Abstract model for files."""
 
-    dispute = models.ForeignKey(
-        Dispute,
-        on_delete=models.CASCADE,
-        related_name='file'
-    )
     file = models.FileField(
         upload_to='uploads/',
         blank=True,
@@ -105,5 +100,31 @@ class FileDispute(models.Model):
         verbose_name='Файл',
     )
 
+    class Meta:
+        abstract = True
+
+
+class FileDispute(File):
+    """File of dispute model."""
+
+    dispute = models.ForeignKey(
+        Dispute,
+        on_delete=models.CASCADE,
+        related_name='file'
+    )
+
     def __str__(self):
         return f'Файл в {self.dispute}'
+
+
+class FileComment(File):
+    """File of comment model."""
+
+    comment = models.ForeignKey(
+        Comment,
+        on_delete=models.CASCADE,
+        related_name='file'
+    )
+
+    def __str__(self):
+        return f'Файл в {self.comment}'
