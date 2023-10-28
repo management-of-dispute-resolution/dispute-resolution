@@ -85,7 +85,6 @@ class DisputeSerializer(serializers.ModelSerializer):
         )
         read_only_fields = (
             'creator',
-            'opponent',
             'created_at',
             'closed_at',
             'status',
