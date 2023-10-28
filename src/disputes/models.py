@@ -11,12 +11,6 @@ class BaseModel(models.Model):
         auto_now_add=True,
         verbose_name='Дата создания',
     )
-    file = models.FileField(
-        # upload_to='uploads/',
-        blank=True,
-        null=True,
-        verbose_name='Файл',
-    )
 
     class Meta:
         abstract = True
@@ -94,3 +88,22 @@ class Comment(BaseModel):
 
     def __str__(self):
         return f'Комментарий от {self.sender}'
+
+
+class FileDispute(models.Model):
+    """File of dispute model."""
+
+    dispute = models.ForeignKey(
+        Dispute,
+        on_delete=models.CASCADE,
+        related_name='file'
+    )
+    file = models.FileField(
+        upload_to='uploads/',
+        blank=True,
+        null=True,
+        verbose_name='Файл',
+    )
+
+    def __str__(self):
+        return f'Файл в {self.dispute}'
