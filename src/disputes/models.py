@@ -91,6 +91,8 @@ class Comment(BaseModel):
 
 
 class FileDispute(models.Model):
+    """File of dispute model."""
+
     dispute = models.ForeignKey(
         Dispute,
         on_delete=models.CASCADE,
@@ -102,3 +104,6 @@ class FileDispute(models.Model):
         null=True,
         verbose_name='Файл',
     )
+
+    def __str__(self):
+        return f'Файл в {self.dispute}'

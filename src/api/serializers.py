@@ -42,6 +42,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class FileDisputeSerializer(serializers.ModelSerializer):
+    """Serializer for the File in dispute."""
+
     class Meta:
         model = FileDispute
         fields = "__all__"
@@ -102,6 +104,7 @@ class DisputeSerializer(serializers.ModelSerializer):
         return None
 
     def create(self, validated_data):
+        """Create the dispute."""
         uploaded_files = validated_data.pop('uploaded_files', None)
         opponent = validated_data.pop('opponent', None)
         dispute = Dispute.objects.create(**validated_data)
