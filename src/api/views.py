@@ -3,6 +3,7 @@ from datetime import datetime
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from rest_framework import status
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -26,18 +27,39 @@ class CustomUserViewSet(UserViewSet):
     serializer_class = CustomUserSerializer
 
 
+def check_opponent(func):
+    """
+    Ensure the request user does not set themselves as an opponent.
+
+    A decorator that checks if
+    the request user is attempting to
+    set themselves as an opponent.
+    """
+
+    def wrapper(self, request, *args, **kwargs):
+        opponent_ids = request.data.get('opponent', [])
+        opponent_ids = [int(opponent_id) for opponent_id in opponent_ids]
+        if request.user.id in opponent_ids:
+            return Response(
+                {'opponent': ['You cannot set yourself as an opponent.']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return func(self, request, *args, **kwargs)
+
+    return wrapper
+
+
 class DisputeViewSet(ModelViewSet):
     """A viewset that provides CRUD operations for disputes."""
 
     serializer_class = DisputeSerializer
     permission_classes = (IsAuthorOrMediatorOrReadOnly,)
+    http_method_names = ['get', 'post', 'patch', 'delete']
+    parser_class = [MultiPartParser, FormParser]
 
     def get_queryset(self):
-        """
-        Get the queryset of disputes.
-
-        Based on the user's role and authentication status.
-        """
+        """Change the queryset for DisputeViewSet."""
         user = self.request.user
 
         if user.is_mediator:
@@ -48,6 +70,7 @@ class DisputeViewSet(ModelViewSet):
         else:
             return Dispute.objects.none()
 
+    @check_opponent
     def create(self, request, *args, **kwargs):
         """Change the POST request for DisputeViewSet."""
         serializer = DisputeSerializer(data=request.data)
@@ -56,6 +79,7 @@ class DisputeViewSet(ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @check_opponent
     def partial_update(self, request, pk=None):
         """Change the PATCH request for DisputeViewSet."""
         dispute = Dispute.objects.get(id=pk)
@@ -83,6 +107,7 @@ class CommentViewSet(CreteListModelViewSet):
 
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+    parser_class = [MultiPartParser, FormParser]
 
     def get_queryset(self):
         """Change the queryset for CommentViewSet."""
