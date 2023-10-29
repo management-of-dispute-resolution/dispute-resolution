@@ -1,3 +1,5 @@
+from enum import Enum
+
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
@@ -7,6 +9,14 @@ from django.core.validators import RegexValidator
 from django.db import models
 
 from config.settings import USER_FIELD
+
+
+class UserRoleEnum(Enum):
+    """Enum representing user roles."""
+
+    USER = 'Пользователь'
+    MEDIATOR = 'Медиатор'
+    ADMIN = 'Администратор'
 
 
 class CustomUserManager(BaseUserManager):
@@ -111,15 +121,6 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     """Custom user model."""
 
-    USER = 'user'
-    MEDIATOR = 'mediator'
-    ADMINISTRATOR = 'admin'
-
-    USER_ROLES = [
-        (USER, 'Пользователь'),
-        (MEDIATOR, 'Медиатор'),
-        (ADMINISTRATOR, 'Администратор'),
-    ]
     email = models.EmailField(
         max_length=USER_FIELD,
         unique=True,
@@ -147,8 +148,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     role = models.CharField(
         verbose_name='Роль',
         max_length=USER_FIELD,
-        choices=USER_ROLES,
-        default=USER,
+        choices=[(role.value, role.name) for role in UserRoleEnum],
+        default=UserRoleEnum.USER.value,
     )
 
     is_staff = models.BooleanField(default=False)
@@ -163,17 +164,17 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     @property
     def is_user(self):
         """Check the role 'user'."""
-        return self.role == 'user'
+        return self.role == UserRoleEnum.USER.value
 
     @property
     def is_admin(self):
         """Check the role 'admin'."""
-        return self.role == 'admin'
+        return self.role == UserRoleEnum.ADMIN.value
 
     @property
     def is_mediator(self):
         """Check the role 'mediator'."""
-        return self.role == 'mediator'
+        return self.role == UserRoleEnum.MEDIATOR.value
 
     class Meta:
         ordering = ('email',)
