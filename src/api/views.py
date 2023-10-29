@@ -25,6 +25,25 @@ class CustomUserViewSet(UserViewSet):
     serializer_class = CustomUserSerializer
 
 
+def check_opponent(func):
+    """
+        A decorator to check if the request user is trying
+        to set themselves as an opponent.
+    """
+    def wrapper(self, request, *args, **kwargs):
+        opponent_ids = request.data.get('opponent', [])
+        opponent_ids = [int(opponent_id) for opponent_id in opponent_ids]
+        if request.user.id in opponent_ids:
+            return Response(
+                {'opponent': ['You cannot set yourself as an opponent.']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return func(self, request, *args, **kwargs)
+
+    return wrapper
+
+
 class DisputeViewSet(ModelViewSet):
     """A viewset that provides CRUD operations for disputes."""
 
@@ -43,6 +62,7 @@ class DisputeViewSet(ModelViewSet):
         else:
             return Dispute.objects.none()
 
+    @check_opponent
     def create(self, request, *args, **kwargs):
         """Change the POST request for DisputeViewSet."""
         serializer = DisputeSerializer(data=request.data)
@@ -51,6 +71,7 @@ class DisputeViewSet(ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @check_opponent
     def partial_update(self, request, pk=None):
         """Change the PATCH request for DisputeViewSet."""
         dispute = Dispute.objects.get(id=pk)
