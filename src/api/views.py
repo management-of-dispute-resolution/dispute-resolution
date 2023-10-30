@@ -17,6 +17,8 @@ from api.serializers import (
 from disputes.models import Comment, Dispute
 from users.models import CustomUser
 
+from .permissions import IsAuthorOrMediatorOrReadOnly
+
 
 class CustomUserViewSet(UserViewSet):
     """A viewset that provides CRUD operations for users."""
@@ -27,9 +29,13 @@ class CustomUserViewSet(UserViewSet):
 
 def check_opponent(func):
     """
-        A decorator to check if the request user is trying
-        to set themselves as an opponent.
+    Ensure the request user does not set themselves as an opponent.
+
+    A decorator that checks if
+    the request user is attempting to
+    set themselves as an opponent.
     """
+
     def wrapper(self, request, *args, **kwargs):
         opponent_ids = request.data.get('opponent', [])
         opponent_ids = [int(opponent_id) for opponent_id in opponent_ids]
@@ -48,6 +54,7 @@ class DisputeViewSet(ModelViewSet):
     """A viewset that provides CRUD operations for disputes."""
 
     serializer_class = DisputeSerializer
+    permission_classes = (IsAuthorOrMediatorOrReadOnly,)
     http_method_names = ['get', 'post', 'patch', 'delete']
     parser_class = [MultiPartParser, FormParser]
 
