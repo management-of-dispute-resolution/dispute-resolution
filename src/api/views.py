@@ -66,7 +66,8 @@ class DisputeViewSet(ModelViewSet):
             return Dispute.objects.all()
         elif user.is_authenticated:
             return (user.disputes_creator.all()
-                    | user.disputes_opponent.filter(add_opponent=True))
+                    | user.disputes_opponent.filter(add_opponent=True)
+                    ).distinct()
         else:
             return Dispute.objects.none()
 
