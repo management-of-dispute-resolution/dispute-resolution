@@ -1,5 +1,6 @@
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
+from rest_framework.permissions import SAFE_METHODS
 
 from disputes.models import Comment, Dispute, FileComment, FileDispute
 from users.models import CustomUser
@@ -55,6 +56,14 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ('id', 'sender', 'file', 'uploaded_files',
                   'content', 'dispute', 'created_at')
         read_only_fields = ('sender', 'dispute', 'created_at')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'request' in self.context:
+            method = self.context['request'].method
+            if method in SAFE_METHODS:
+                self.fields['sender'] = CustomUserSerializer(read_only=True)
+        super().__init__(*args, **kwargs)
 
     def create(self, validated_data):
         """Create the comment."""
@@ -124,6 +133,15 @@ class DisputeSerializer(serializers.ModelSerializer):
             'comments',
             'last_comment',
         )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'request' in self.context:
+            method = self.context['request'].method
+            if method in SAFE_METHODS:
+                self.fields['creator'] = CustomUserSerializer(read_only=True)
+                self.fields['opponent'] = CustomUserSerializer(many=True)
+        super().__init__(*args, **kwargs)
 
     def get_last_comment(self, obj):
         """Get the last comment."""
