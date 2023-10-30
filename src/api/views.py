@@ -30,6 +30,7 @@ def check_opponent(func):
         A decorator to check if the request user is trying
         to set themselves as an opponent.
     """
+
     def wrapper(self, request, *args, **kwargs):
         opponent_ids = request.data.get('opponent', [])
         opponent_ids = [int(opponent_id) for opponent_id in opponent_ids]
@@ -78,6 +79,26 @@ class DisputeViewSet(ModelViewSet):
         dispute = Dispute.objects.get(id=pk)
         dispute_status = request.data.get('status')
         data = request.data
+
+        if request.user.is_mediator and 'description' in data:
+            return Response(
+                {'description': ['Mediator cannot change description.']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if dispute.creator == request.user and 'status' in data:
+            return Response(
+                {'status': ['Author cannot change status.']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if dispute.creator == request.user and dispute.status != 'not_started':
+            return Response(
+                {'status': [('Author cannot make changes if'
+                             'status is not "not_started".')]},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         if dispute_status == 'closed':
             data['closed_at'] = datetime.now()
         else:
