@@ -129,7 +129,7 @@ SWAGGER_SETTINGS = {
     'is_superuser': False,
 }
 CSRF_TRUSTED_ORIGINS = ['http://*.localhost', 'http://*.127.0.0.1',
-                        'https://*.localhost', 'https://*.127.0.0.1',]
+                        'https://*.localhost', 'https://*.127.0.0.1', 'https://*.80.87.109.81']
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
