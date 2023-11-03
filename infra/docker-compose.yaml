@@ -29,6 +29,8 @@ services:
 
     volumes:
       - /etc/letsencrypt/live/ccdia.acceleratorpracticum.ru/:/etc/nginx/ssl
+      - /etc/letsencrypt/options-ssl-nginx.conf:/etc/letsencrypt/options-ssl-nginx.conf
+      - /etc/letsencrypt/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - static_value:/var/html/static/
       - media_value:/var/html/media/
