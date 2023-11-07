@@ -27,9 +27,9 @@ class BaseModel(models.Model):
 class DisputeStatusEnum(Enum):
     """Enum representing dispute statuses."""
 
-    STARTED = 'Решается'
-    CLOSED = 'Решено'
-    NOT_STARTED = 'Не рассмотрено'
+    STARTED = 'started'
+    CLOSED = 'closed'
+    NOT_STARTED = 'not_started'
 
 
 class Dispute(BaseModel):
