@@ -1,29 +1,31 @@
-from rest_framework import permissions
+from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 
-class IsAuthorOrMediatorOrReadOnly(permissions.BasePermission):
-    """
-    Permission rule based on authorship or mediator status.
-
-    Allows authors to modify and delete objects,
-    mediators to perform any actions,
-    and other users to perform only safe methods (GET, HEAD, OPTIONS).
-    """
+class IsCreatorOrMediatorOrOpponent(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated == True
 
     def has_object_permission(self, request, view, obj):
-        """
-        Check whether the user has permission to access the object.
-
-        Parameters:
-        - request: The request object.
-        - view: The view object.
-        - obj: The object the request is made to.
-
-        Returns:
-        - bool: True if the user has permission, otherwise False.
-        """
-        return (
-            obj.author == request.user
-            or request.method in permissions.SAFE_METHODS
+        if (obj.creator == request.user
             or request.user.is_mediator
-        )
+        ):
+            return True
+        elif request.method in SAFE_METHODS:
+            return True
+        else:
+            return False                 
+
+class IsSenderOrMediatorOrDisputeCreator(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated == True
+        
+
+    def has_object_permissions(self, request, view, obj):
+        if (obj.sender == request.user
+            or request.user.is_mediator
+        ):
+            return True
+        elif request.method in SAFE_METHODS:
+            return True
+        else:
+            return False
