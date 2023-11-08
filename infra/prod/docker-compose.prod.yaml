@@ -20,6 +20,14 @@ services:
       - db
     env_file:
       - ../../.env
+  frontend:
+    build:
+      context: ../../../dispute_resolution_frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ../../../dispute_resolution_frontend/:/app/result_build/
+    depends_on:
+      - backend
   nginx:
     image: nginx:1.21.3-alpine
 
@@ -29,6 +37,7 @@ services:
 
     volumes:
       - /etc/letsencrypt/:/etc/letsencrypt/
+      - ../../../dispute_resolution_frontend/build:/usr/share/nginx/html/
       - ./nginx.prod.conf:/etc/nginx/conf.d/default.conf
       - static_value:/var/html/static/
       - media_value:/var/html/media/
