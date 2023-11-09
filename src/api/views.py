@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from api.mixins import CreteListModelViewSet
+from api.pagination import DisputePagination
 from api.serializers import (
     CommentSerializer,
     CustomUserSerializer,
@@ -16,7 +17,7 @@ from api.serializers import (
 )
 from disputes.models import Comment, Dispute
 from users.models import CustomUser
-
+from django.core.paginator import Paginator
 
 class CustomUserViewSet(UserViewSet):
     """A viewset that provides CRUD operations for users."""
@@ -52,13 +53,13 @@ class DisputeViewSet(ModelViewSet):
     """A viewset that provides CRUD operations for disputes."""
 
     serializer_class = DisputeSerializer
+    pagination_class = DisputePagination
     http_method_names = ['get', 'post', 'patch', 'delete']
     parser_class = [MultiPartParser, FormParser]
 
     def get_queryset(self):
         """Change the queryset for DisputeViewSet."""
         user = self.request.user
-
         if user.is_mediator:
             return Dispute.objects.all()
         elif user.is_authenticated:
