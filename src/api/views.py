@@ -17,7 +17,7 @@ from api.serializers import (
 )
 from disputes.models import Comment, Dispute
 from users.models import CustomUser
-from django.core.paginator import Paginator
+
 
 class CustomUserViewSet(UserViewSet):
     """A viewset that provides CRUD operations for users."""
