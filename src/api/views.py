@@ -13,7 +13,8 @@ from api.serializers import (
     CommentSerializer,
     CustomUserSerializer,
     DisputeSerializer,
-    PatchDisputeSerializer,)
+    PatchDisputeSerializer,
+)
 from disputes.models import Comment, Dispute
 from users.models import CustomUser
 
