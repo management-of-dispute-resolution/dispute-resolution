@@ -1,3 +1,6 @@
+import os
+from urllib.parse import unquote
+
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 from rest_framework.permissions import SAFE_METHODS
@@ -81,9 +84,78 @@ class CommentSerializer(serializers.ModelSerializer):
 class FileDisputeSerializer(serializers.ModelSerializer):
     """Serializer for the File in dispute."""
 
+    size = serializers.SerializerMethodField()
+    filename = serializers.SerializerMethodField()
+    file = serializers.FileField()
+    MAX_FILENAME_LENGTH = 50
+
     class Meta:
         model = FileDispute
         fields = "__all__"
+
+    def get_size(self, obj):
+        """Calculate the size in bytes."""
+        if obj.file:
+            file_path = obj.file.path
+            if os.path.exists(file_path):
+                size_bytes = os.path.getsize(file_path)
+                return size_bytes
+        return 0
+
+    def get_filename(self, obj):
+        """Remove unreadbale characters in filename.
+
+        Example:
+        Before - hot_dog_KXxIrPe.jpg
+        After - hot_dog.jpg",
+        """
+        if obj.file:
+            filename = obj.file.name
+
+            # Remove the directory path
+            parts = filename.split('/')
+            if parts:
+                # Get the last part, which is the filename
+                filename = parts[-1]
+
+                # Remove the last part of the filename
+                parts = filename.split('_')
+                if len(parts) >= 2:
+                    # If there are at least two parts,
+                    # join all except the last part
+                    return '_'.join(parts[:-1])
+                else:
+                    # If there's only one part, return the whole filename
+                    return filename
+
+            return filename  # Return the modified filename
+
+        return ""
+
+    def to_representation(self, instance):
+        """
+        Modify the representation of the serialized data.
+
+        This method decodes the 'file' field to convert
+        percent-encoded characters
+        back to readable characters
+        with support for Cyrillic.
+
+        Args:
+            instance: The instance being serialized.
+
+        Returns:
+            dict: A modified representation of the serialized data.
+
+        Example:
+        Before - "http://127.0.0.1:8000/media/
+        uploads/%D0%91%D0%BE%D1%80%D1%89.jpg"
+
+        After -  "http://127.0.0.1:8000/media/uploads/Борщ.jpg"
+        """
+        data = super().to_representation(instance)
+        data['file'] = unquote(data['file'])
+        return data
 
 
 class DisputeSerializer(serializers.ModelSerializer):
@@ -91,6 +163,7 @@ class DisputeSerializer(serializers.ModelSerializer):
 
     last_comment = serializers.SerializerMethodField()
     file = FileDisputeSerializer(many=True, read_only=True)
+
     uploaded_files = serializers.ListField(
         child=serializers.FileField(allow_empty_file=False, use_url=False),
         write_only=True,
