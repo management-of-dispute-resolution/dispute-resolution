@@ -90,11 +90,13 @@ class DisputeViewSet(ModelViewSet):
         data = self.request.data
         user = self.request.user
 
-        if user.is_authenticated  and (
-            user == dispute.creator
-            or user.is_mediator
-        ):
-            if user != dispute.creator and 'description' in data:
+        if user.is_authenticated:
+            if user != dispute.creator or not user.is_mediator:
+                return Response(
+                    {'description': ['You do not have the right to change the dispute.']},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            elif user != dispute.creator and 'description' in data:
                 return Response(
                     {'description': ['Mediator cannot change description.']},
                     status=status.HTTP_400_BAD_REQUEST
@@ -109,12 +111,7 @@ class DisputeViewSet(ModelViewSet):
             elif dispute.creator == user and dispute.status != 'not_started':
                 return Response(
                     {'status': [('Author cannot make changes if '
-                                 'status is not "not_started".')]},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-        else:
-            return Response(
-                    {'description': ['You do not have the right to change the dispute.']},
+                             'status is not "not_started".')]},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
