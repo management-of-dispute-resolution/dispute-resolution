@@ -140,20 +140,23 @@ class CommentViewSet(CreteListModelViewSet):
 
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = (IsSenderOrMediatorOrDisputeCreator,)
+    http_method_names = ['get', 'post']
     parser_class = [MultiPartParser, FormParser]
 
     def get_queryset(self):
         """Change the queryset for CommentViewSet."""
         dispute_id = self.kwargs.get('dispute_id')
         dispute = get_object_or_404(Dispute, id=dispute_id)
-        new_queryset = dispute.comments.all()
         user = self.request.user
-        if user.is_authenticated:
-            if (user.is_mediator or dispute.creator == user
-                or (dispute.add_opponent == True and dispute.opponent == user)
-            ):
-                return new_queryset
+        is_opponent = dispute.opponent.filter(id=user.id).exists()
+        new_queryset = dispute.comments.all()
+        if (
+            (is_opponent and dispute.add_opponent)
+            or user == dispute.creator
+            or user.is_mediator
+        ):
+        
+            return new_queryset
         else:
             return Comment.objects.none()
 
@@ -161,4 +164,11 @@ class CommentViewSet(CreteListModelViewSet):
         """Change the POST request for CommentViewSet."""
         dispute_id = self.kwargs.get('dispute_id')
         dispute = get_object_or_404(Dispute, id=dispute_id)
-        serializer.save(sender=self.request.user, dispute=dispute)
+        user = self.request.user
+        is_opponent = dispute.opponent.filter(id=user.id).exists()
+        if (
+            (is_opponent and dispute.add_opponent)
+            or user == dispute.creator
+            or user.is_mediator
+        ):
+            serializer.save(sender=user, dispute=dispute)
