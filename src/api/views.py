@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from rest_framework import status
+from rest_framework import filters, status
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -24,6 +24,8 @@ class CustomUserViewSet(UserViewSet):
 
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('first_name', 'last_name')
 
 
 def check_opponent(func):
