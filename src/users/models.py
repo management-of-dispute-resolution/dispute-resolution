@@ -135,12 +135,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name='Фамилия', max_length=USER_FIELD
     )
     phone_number = models.CharField(
-        max_length=12,
+        max_length=16,
         unique=True,
         validators=[
             RegexValidator(
-                regex=r'^\d+$',
-                message='Номер телефона может состоять только из цифр',
+                regex=r'''^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[
+                    \s\-]?[0-9]{2}[\s\-]?[0-9]{2}$''',
+                message='''Номер телефона может начинаться только с 7, +7, 8 и
+                разделители только "-" или пробел.''',
             )
         ],
     )
