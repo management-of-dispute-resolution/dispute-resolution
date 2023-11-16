@@ -8,10 +8,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from api.mixins import CreteListModelViewSet
-from api.permissions import (
-    IsCreatorOrMediatorOrOpponent,
-    IsSenderOrMediatorOrDisputeCreator,
-)
+from api.permissions import IsCreatorOrMediatorOrOpponent
 from api.serializers import (
     CommentSerializer,
     CustomUserSerializer,
