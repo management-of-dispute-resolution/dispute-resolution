@@ -14,9 +14,9 @@ from config.settings import USER_FIELD
 class UserRoleEnum(Enum):
     """Enum representing user roles."""
 
-    USER = 'Пользователь'
-    MEDIATOR = 'Медиатор'
-    ADMIN = 'Администратор'
+    USER = 'User'
+    MEDIATOR = 'Mediator'
+    ADMIN = 'Admin'
 
 
 class CustomUserManager(BaseUserManager):
@@ -146,10 +146,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ],
     )
     role = models.CharField(
-        verbose_name='Роль',
         max_length=USER_FIELD,
         choices=[(role.value, role.name) for role in UserRoleEnum],
         default=UserRoleEnum.USER.value,
+        verbose_name='Роль',
     )
 
     is_staff = models.BooleanField(default=False)
