@@ -109,7 +109,7 @@ class DisputeViewSet(ModelViewSet):
             )
 
         if dispute_status == 'closed':
-            data['closed_at'] = datetime.now()
+            dispute.closed_at = datetime.now()
         else:
             dispute.closed_at = None
         serializer = PatchDisputeSerializer(dispute, data=data, partial=True)
