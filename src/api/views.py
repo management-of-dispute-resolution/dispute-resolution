@@ -108,6 +108,12 @@ class DisputeViewSet(ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        if dispute.status == 'closed':
+            return Response(
+                {'detail': ['Cannot update a closed dispute.']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         if dispute_status == 'closed':
             dispute.closed_at = datetime.now()
         else:
@@ -117,6 +123,19 @@ class DisputeViewSet(ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        """Change the DELETE request for DisputeViewSet."""
+        dispute = self.get_object()
+
+        if request.user.is_mediator:
+            return Response(
+                {'detail': ['Mediator cannot delete disputes.']},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        dispute.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CommentViewSet(CreteListModelViewSet):
@@ -136,11 +155,21 @@ class CommentViewSet(CreteListModelViewSet):
         """Change the queryset for CommentViewSet."""
         dispute_id = self.kwargs.get('dispute_id')
         dispute = get_object_or_404(Dispute, id=dispute_id)
-        new_queryset = dispute.comments.all()
-        return new_queryset
+        return dispute.comments.all()
 
-    def perform_create(self, serializer):
+    def create(self, request, *args, **kwargs):
         """Change the POST request for CommentViewSet."""
         dispute_id = self.kwargs.get('dispute_id')
         dispute = get_object_or_404(Dispute, id=dispute_id)
-        serializer.save(sender=self.request.user, dispute=dispute)
+
+        if dispute.status == 'closed':
+            return Response(
+                {'detail': 'Cannot add a comment to a closed dispute.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(sender=self.request.user, dispute=dispute)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
