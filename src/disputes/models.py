@@ -1,3 +1,5 @@
+from enum import Enum
+
 from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator
 from django.db import models
@@ -19,21 +21,19 @@ class BaseModel(models.Model):
         abstract = True
 
 
-class Dispute(BaseModel):
-    """Dispute model."""
-
-    MAX_LENGTH_TITLE = 50
-    MAX_LENGTH_STATUS = 20
+class DisputeStatusEnum(Enum):
+    """Enum representing dispute statuses."""
 
     STARTED = 'started'
     CLOSED = 'closed'
     NOT_STARTED = 'not_started'
 
-    DISPUTE_STATUS = [
-        (STARTED, 'Решается'),
-        (CLOSED, 'Решено'),
-        (NOT_STARTED, 'Не рассмотрено'),
-    ]
+
+class Dispute(BaseModel):
+    """Dispute model."""
+
+    MAX_LENGTH_TITLE = 50
+    MAX_LENGTH_STATUS = 20
 
     creator = models.ForeignKey(
         User,
@@ -52,8 +52,8 @@ class Dispute(BaseModel):
     )
     status = models.CharField(
         max_length=MAX_LENGTH_STATUS,
-        choices=DISPUTE_STATUS,
-        default=NOT_STARTED,
+        choices=[(status.value, status.name) for status in DisputeStatusEnum],
+        default=DisputeStatusEnum.NOT_STARTED.value,
         verbose_name='Статус обращения',
     )
     opponent = models.ManyToManyField(
