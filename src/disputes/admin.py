@@ -1,19 +1,28 @@
 from django.contrib import admin
 
-from .models import Comment, Dispute, FileComment, FileDispute
+from disputes.models import Comment, Dispute, FileComment, FileDispute
+
 
 class DisputeAdmin(admin.ModelAdmin):
-    list_display = ['id', 'creator', 'description', 'status', 'count_comments_for_dispute']
+    """
+    A class that displays the interface of the Dispute in the admin panel.
+
+    Contains a list_display, search_fields, list_filter.
+    """
+
+    list_display = ['id', 'creator', 'description', 'status']
     search_fields = ['creator']
     list_filter = ['created_at', 'creator', 'status']
 
-    def count_comments_for_dispute(self, obj):
-        return obj.comments.all().count()
-
-    count_comments_for_dispute.short_description = 'Количество комментариев к спору'
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ['id', 'sender', 'content','dispute']
+    """
+    A class that displays the interface of the Comment in the admin panel.
+
+    Contains a list_display, search_fields, list_filter.
+    """
+
+    list_display = ['id', 'sender', 'content', 'dispute']
     search_fields = ['sender']
     list_filter = ['created_at', 'sender', 'dispute']
 
@@ -22,4 +31,3 @@ admin.site.register(Dispute, DisputeAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(FileDispute)
 admin.site.register(FileComment)
-

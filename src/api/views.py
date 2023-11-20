@@ -9,7 +9,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from api.mixins import CreteListModelViewSet
 from api.pagination import DisputePagination
-from api.permissions import IsCreatorOrMediatorOrOpponent
+from api.permissions import CommentsPermission, IsCreatorOrMediatorOrOpponent
 from api.serializers import (
     CommentSerializer,
     CustomUserSerializer,
@@ -71,14 +71,11 @@ class DisputeViewSet(ModelViewSet):
                 return (user.disputes_creator.all()
                         | user.disputes_opponent.filter(add_opponent=True)
                         ).distinct()
-        else:
-            return Dispute.objects.none()
 
     @check_opponent
     def create(self, request, *args, **kwargs):
         """Change the POST request for DisputeViewSet."""
         serializer = DisputeSerializer(data=request.data)
-
         if serializer.is_valid():
             serializer.save(creator=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -87,36 +84,10 @@ class DisputeViewSet(ModelViewSet):
     @check_opponent
     def partial_update(self, request, pk=None):
         """Change the PATCH request for DisputeViewSet."""
-        dispute = Dispute.objects.get(id=pk)
+        dispute = self.get_object()
         dispute_status = request.data.get('status')
         data = self.request.data
         user = self.request.user
-
-        if user.is_authenticated:
-            if user != dispute.creator or not user.is_mediator:
-                return Response(
-                    {'description': [
-                        'You do not have the right to change the dispute.']},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            elif user != dispute.creator and 'description' in data:
-                return Response(
-                    {'description': ['Mediator cannot change description.']},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
-            elif not user.is_mediator and 'status' in data:
-                return Response(
-                    {'status': ['Author cannot change status.']},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
-            elif dispute.creator == user and dispute.status != 'not_started':
-                return Response(
-                    {'status': [('Author cannot make changes if '
-                                 'status is not "not_started".')]},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
 
         if dispute.status == 'closed':
             return Response(
@@ -124,9 +95,22 @@ class DisputeViewSet(ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        if dispute.status == 'closed':
+        if user != dispute.creator and 'description' in data:
             return Response(
-                {'detail': ['Cannot update a closed dispute.']},
+                {'description': ['Mediator cannot change description.']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if not user.is_mediator and 'status' in data:
+            return Response(
+                {'status': ['Author cannot change status.']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if dispute.creator == user and dispute.status != 'not_started':
+            return Response(
+                {'status': [('Author cannot make changes if '
+                             'status is not "not_started".')]},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -134,6 +118,7 @@ class DisputeViewSet(ModelViewSet):
             dispute.closed_at = datetime.now()
         else:
             dispute.closed_at = None
+
         serializer = PatchDisputeSerializer(dispute, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -165,15 +150,14 @@ class CommentViewSet(CreteListModelViewSet):
 
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    http_method_names = ['get', 'post']
     parser_class = [MultiPartParser, FormParser]
+    permission_classes = (CommentsPermission,)
 
     def get_queryset(self):
         """Change the queryset for CommentViewSet."""
         dispute_id = self.kwargs.get('dispute_id')
         dispute = get_object_or_404(Dispute, id=dispute_id)
-        new_queryset = dispute.comments.all()
-        return new_queryset
+        return dispute.comments.all()
 
     def create(self, request, *args, **kwargs):
         """Change the POST request for CommentViewSet."""
