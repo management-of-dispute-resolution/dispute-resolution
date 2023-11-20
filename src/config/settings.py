@@ -112,6 +112,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 USER_FIELD = 100
+MIN_LENGTH = 25
+MAX_LENGTH = 1000
 
 # User
 
@@ -128,7 +130,9 @@ SWAGGER_SETTINGS = {
     'is_authenticated': False,
     'is_superuser': False,
 }
-CSRF_TRUSTED_ORIGINS = ['http://*.localhost', 'http://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['http://*.localhost', 'http://*.127.0.0.1',
+                        'https://*.localhost', 'https://*.127.0.0.1',
+                        'https://*.80.87.109.81', 'https://*.ccdia.acceleratorpracticum.ru']
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [

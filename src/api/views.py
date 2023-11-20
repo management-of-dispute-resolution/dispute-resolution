@@ -2,12 +2,13 @@ from datetime import datetime
 
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from rest_framework import status
+from rest_framework import filters, status
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from api.mixins import CreteListModelViewSet
+from api.pagination import DisputePagination
 from api.permissions import IsCreatorOrMediatorOrOpponent
 from api.serializers import (
     CommentSerializer,
@@ -24,6 +25,8 @@ class CustomUserViewSet(UserViewSet):
 
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('first_name', 'last_name')
 
 
 def check_opponent(func):
@@ -53,6 +56,7 @@ class DisputeViewSet(ModelViewSet):
     """A viewset that provides CRUD operations for disputes."""
 
     serializer_class = DisputeSerializer
+    pagination_class = DisputePagination
     http_method_names = ['get', 'post', 'patch', 'delete']
     permission_classes = (IsCreatorOrMediatorOrOpponent,)
     parser_class = [MultiPartParser, FormParser]
@@ -65,8 +69,8 @@ class DisputeViewSet(ModelViewSet):
                 return Dispute.objects.all()
             else:
                 return (user.disputes_creator.all()
-                    | user.disputes_opponent.filter(add_opponent=True)
-                    ).distinct()
+                        | user.disputes_opponent.filter(add_opponent=True)
+                        ).distinct()
         else:
             return Dispute.objects.none()
 
@@ -74,6 +78,7 @@ class DisputeViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         """Change the POST request for DisputeViewSet."""
         serializer = DisputeSerializer(data=request.data)
+
         if serializer.is_valid():
             serializer.save(creator=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -90,7 +95,8 @@ class DisputeViewSet(ModelViewSet):
         if user.is_authenticated:
             if user != dispute.creator or not user.is_mediator:
                 return Response(
-                    {'description': ['You do not have the right to change the dispute.']},
+                    {'description': [
+                        'You do not have the right to change the dispute.']},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             elif user != dispute.creator and 'description' in data:
@@ -108,12 +114,24 @@ class DisputeViewSet(ModelViewSet):
             elif dispute.creator == user and dispute.status != 'not_started':
                 return Response(
                     {'status': [('Author cannot make changes if '
-                             'status is not "not_started".')]},
+                                 'status is not "not_started".')]},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
+        if dispute.status == 'closed':
+            return Response(
+                {'detail': ['Cannot update a closed dispute.']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if dispute.status == 'closed':
+            return Response(
+                {'detail': ['Cannot update a closed dispute.']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         if dispute_status == 'closed':
-            data['closed_at'] = datetime.now()
+            dispute.closed_at = datetime.now()
         else:
             dispute.closed_at = None
         serializer = PatchDisputeSerializer(dispute, data=data, partial=True)
@@ -121,6 +139,19 @@ class DisputeViewSet(ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        """Change the DELETE request for DisputeViewSet."""
+        dispute = self.get_object()
+
+        if request.user.is_mediator:
+            return Response(
+                {'detail': ['Mediator cannot delete disputes.']},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        dispute.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CommentViewSet(CreteListModelViewSet):
@@ -141,28 +172,22 @@ class CommentViewSet(CreteListModelViewSet):
         """Change the queryset for CommentViewSet."""
         dispute_id = self.kwargs.get('dispute_id')
         dispute = get_object_or_404(Dispute, id=dispute_id)
-        user = self.request.user
-        is_opponent = dispute.opponent.filter(id=user.id).exists()
         new_queryset = dispute.comments.all()
-        if (
-            (is_opponent and dispute.add_opponent)
-            or user == dispute.creator
-            or user.is_mediator
-        ):
-        
-            return new_queryset
-        else:
-            return Comment.objects.none()
+        return new_queryset
 
-    def perform_create(self, serializer):
+    def create(self, request, *args, **kwargs):
         """Change the POST request for CommentViewSet."""
         dispute_id = self.kwargs.get('dispute_id')
         dispute = get_object_or_404(Dispute, id=dispute_id)
-        user = self.request.user
-        is_opponent = dispute.opponent.filter(id=user.id).exists()
-        if (
-            (is_opponent and dispute.add_opponent)
-            or user == dispute.creator
-            or user.is_mediator
-        ):
-            serializer.save(sender=user, dispute=dispute)
+
+        if dispute.status == 'closed':
+            return Response(
+                {'detail': 'Cannot add a comment to a closed dispute.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(sender=self.request.user, dispute=dispute)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

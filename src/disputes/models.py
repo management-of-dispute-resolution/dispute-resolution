@@ -1,5 +1,8 @@
 from django.contrib.auth import get_user_model
+from django.core.validators import MinLengthValidator
 from django.db import models
+
+from config.settings import MAX_LENGTH, MIN_LENGTH
 
 User = get_user_model()
 
@@ -38,7 +41,10 @@ class Dispute(BaseModel):
         related_name='disputes_creator',
         verbose_name='Создатель',
     )
-    description = models.TextField(verbose_name='Описание')
+    description = models.TextField(
+        verbose_name='Описание',
+        validators=[MinLengthValidator(MIN_LENGTH)],
+        max_length=MAX_LENGTH)
     closed_at = models.DateTimeField(
         verbose_name='Время закрытия',
         blank=True,
@@ -60,6 +66,7 @@ class Dispute(BaseModel):
     class Meta:
         verbose_name = 'Спор'
         verbose_name_plural = 'Споры'
+        ordering = ['-created_at']
 
     def __str__(self):
         return f'Спор от {self.creator}'
@@ -74,7 +81,10 @@ class Comment(BaseModel):
         related_name='comments',
         verbose_name='отправитель',
     )
-    content = models.TextField(verbose_name='Описание')
+    content = models.TextField(
+        verbose_name='Описание',
+        validators=[MinLengthValidator(MIN_LENGTH)],
+        max_length=MAX_LENGTH)
     dispute = models.ForeignKey(
         Dispute,
         on_delete=models.CASCADE,
@@ -85,6 +95,7 @@ class Comment(BaseModel):
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
+        ordering = ['-created_at']
 
     def __str__(self):
         return f'Комментарий от {self.sender}'
