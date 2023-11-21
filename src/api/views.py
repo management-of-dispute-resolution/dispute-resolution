@@ -107,7 +107,7 @@ class DisputeViewSet(ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        if request.user.is_mediator and 'opponent' in data:
+        if user.is_mediator and 'opponent' in data:
             return Response(
                 {'description': ['Mediator cannot change opponent.']},
                 status=status.HTTP_400_BAD_REQUEST
