@@ -3,6 +3,7 @@ from django.core.validators import MinLengthValidator
 from django.db import models
 
 from config.settings import MAX_LENGTH, MIN_LENGTH
+from disputes.validators import text_validator
 
 User = get_user_model()
 
@@ -43,7 +44,7 @@ class Dispute(BaseModel):
     )
     description = models.TextField(
         verbose_name='Описание',
-        validators=[MinLengthValidator(MIN_LENGTH)],
+        validators=[MinLengthValidator(MIN_LENGTH), text_validator()],
         max_length=MAX_LENGTH)
     closed_at = models.DateTimeField(
         verbose_name='Время закрытия',
@@ -83,7 +84,7 @@ class Comment(BaseModel):
     )
     content = models.TextField(
         verbose_name='Описание',
-        validators=[MinLengthValidator(MIN_LENGTH)],
+        validators=[MinLengthValidator(MIN_LENGTH), text_validator()],
         max_length=MAX_LENGTH)
     dispute = models.ForeignKey(
         Dispute,
