@@ -107,6 +107,12 @@ class DisputeViewSet(ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        if user.is_mediator and 'opponent' in data:
+            return Response(
+                {'description': ['Mediator cannot change opponent.']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         if dispute.creator == user and dispute.status != 'not_started':
             return Response(
                 {'status': [('Author cannot make changes if '
