@@ -45,6 +45,7 @@ MIDDLEWARE = [
     'api.custom_middleware.PreventRegistrationMiddleware',
 ]
 
+
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
@@ -91,6 +92,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    {
+        'NAME': 'api.validators.UniquePasswordValidator',
+    }
 ]
 
 
@@ -143,6 +147,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
+
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
