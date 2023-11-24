@@ -45,3 +45,46 @@ class UniquePasswordValidator(BaseValidator):
     def get_help_text(self):
         """Return a help text describing the validation rule."""
         return (ERROR_MESSAGE)
+
+
+class MaximumLengthValidator(object):
+    """Validate whether the password is of a maximum length."""
+
+    def __init__(self, max_length=32):
+        """
+        Initialize the MaximumLengthValidator.
+
+        Args:
+            max_length (int): The maximum allowed length
+            for the password (default is 32).
+        """
+        self.max_length = max_length
+
+    def validate(self, password, user=None):
+        """
+        Validate the length of the password.
+
+        Args:
+            password (str): The password to validate.
+            user: The user object associated with the password
+            (default is None).
+
+        Raises:
+            ValidationError: If the password length exceeds
+            the maximum allowed length.
+        """
+        if len(password) > self.max_length:
+            raise ValidationError(
+                "This password is too long."
+                "It must contain at most {} character{}.".format(
+                    self.max_length, 's' if self.max_length > 1 else ''
+                ),
+                code='password_too_long',
+                params={'max_length': self.max_length},
+            )
+
+    def get_help_text(self):
+        """Return a help text describing the maximum length validation rule."""
+        return "Your password must contain at most {} character{}.".format(
+            self.max_length, 's' if self.max_length > 1 else ''
+        )

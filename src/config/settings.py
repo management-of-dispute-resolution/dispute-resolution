@@ -94,6 +94,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'api.validators.UniquePasswordValidator',
+    },
+    {
+        'NAME': 'api.validators.MaximumLengthValidator',
     }
 ]
 
