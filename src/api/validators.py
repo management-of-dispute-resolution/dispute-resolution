@@ -1,7 +1,9 @@
+import re
+
 from django.core.exceptions import ValidationError
 from django.core.validators import BaseValidator
 
-from api.api_consts import ERROR_MESSAGE
+from api.api_consts import ERROR_MESSAGE, VALIDATION_MESSAGE
 
 
 class UniquePasswordValidator(BaseValidator):
@@ -41,6 +43,10 @@ class UniquePasswordValidator(BaseValidator):
                 (ERROR_MESSAGE),
                 code='password_reuse',
             )
+
+        if not re.fullmatch(r'[A-Za-z0-9@№:;~#$%^!<>&+,.?/\\`()*|\-=]{8,32}',
+                            password):
+            raise ValidationError(VALIDATION_MESSAGE)
 
     def get_help_text(self):
         """Return a help text describing the validation rule."""
