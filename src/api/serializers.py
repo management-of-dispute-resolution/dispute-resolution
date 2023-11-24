@@ -28,7 +28,7 @@ class CustomUserSerializer(UserSerializer):
 
 
 class BaseFileSerializer(serializers.ModelSerializer):
-    """Serializer for the File in dispute."""
+    """Base serializer for the File"""
 
     size = serializers.SerializerMethodField()
     filename = serializers.SerializerMethodField()
