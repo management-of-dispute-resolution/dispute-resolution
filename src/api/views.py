@@ -75,6 +75,13 @@ class DisputeViewSet(ModelViewSet):
     @check_opponent
     def create(self, request, *args, **kwargs):
         """Change the POST request for DisputeViewSet."""
+
+        if request.user.is_mediator:
+            return Response(
+                {'opponent': ['Mediator cannot create disputes.']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         serializer = DisputeSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(creator=self.request.user)
