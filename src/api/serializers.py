@@ -209,7 +209,7 @@ class DisputeSerializer(serializers.ModelSerializer):
             'created_at',
             'closed_at',
             'status',
-            'add_opponent'
+            'add_opponent',
             'status',
             'comments',
             'last_comment',

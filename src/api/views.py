@@ -75,6 +75,13 @@ class DisputeViewSet(ModelViewSet):
     @check_opponent
     def create(self, request, *args, **kwargs):
         """Change the POST request for DisputeViewSet."""
+
+        if request.user.is_mediator:
+            return Response(
+                {'opponent': ['Mediator cannot create disputes.']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         serializer = DisputeSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(creator=self.request.user)
@@ -138,6 +145,12 @@ class DisputeViewSet(ModelViewSet):
         if request.user.is_mediator:
             return Response(
                 {'detail': ['Mediator cannot delete disputes.']},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        if dispute.status != 'not_started':
+            return Response(
+                {'detail': ['Cannot delete a dispute that has started.']},
                 status=status.HTTP_403_FORBIDDEN
             )
 
