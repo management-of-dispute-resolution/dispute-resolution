@@ -141,6 +141,12 @@ class DisputeViewSet(ModelViewSet):
                 status=status.HTTP_403_FORBIDDEN
             )
 
+        if dispute.status != 'not_started':
+            return Response(
+                {'detail': ['Cannot delete a dispute that has started.']},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         dispute.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
