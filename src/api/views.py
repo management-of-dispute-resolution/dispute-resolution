@@ -75,7 +75,6 @@ class DisputeViewSet(ModelViewSet):
     @check_opponent
     def create(self, request, *args, **kwargs):
         """Change the POST request for DisputeViewSet."""
-
         if request.user.is_mediator:
             return Response(
                 {'opponent': ['Mediator cannot create disputes.']},
@@ -116,7 +115,7 @@ class DisputeViewSet(ModelViewSet):
 
         if user.is_mediator and 'opponent' in data:
             return Response(
-                {'description': ['Mediator cannot change opponent.']},
+                {'opponent': ['Mediator cannot change opponent.']},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -186,6 +185,11 @@ class CommentViewSet(CreteListModelViewSet):
         if dispute.status == 'closed':
             return Response(
                 {'detail': 'Cannot add a comment to a closed dispute.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if dispute.status == 'not_started':
+            return Response(
+                {'detail': 'Cannot add a comment to a not started dispute.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
