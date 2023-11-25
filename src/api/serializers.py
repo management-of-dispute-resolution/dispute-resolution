@@ -27,62 +27,8 @@ class CustomUserSerializer(UserSerializer):
                   'last_name', 'phone_number', 'role']
 
 
-class FileCommentSerializer(serializers.ModelSerializer):
-    """Serializer for the File in comment."""
-
-    class Meta:
-        model = FileComment
-        fields = "__all__"
-
-
-class CommentSerializer(serializers.ModelSerializer):
-    """Serializer for the Comment model."""
-
-    file = FileCommentSerializer(many=True, read_only=True)
-    uploaded_files = serializers.ListField(
-        child=serializers.FileField(allow_empty_file=False, use_url=False),
-        write_only=True,
-        required=False
-    )
-
-    class Meta:
-        """
-        Meta class for CommentSerializer.
-
-        Attributes:
-            model: The Comment model class to be serialized.
-            fields: A string indicating to include all fields
-            from the Comment model.
-        """
-
-        model = Comment
-        fields = ('id', 'sender', 'file', 'uploaded_files',
-                  'content', 'dispute', 'created_at')
-        read_only_fields = ('sender', 'dispute', 'created_at')
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if 'request' in self.context:
-            method = self.context['request'].method
-            if method in SAFE_METHODS:
-                self.fields['sender'] = CustomUserSerializer(read_only=True)
-        super().__init__(*args, **kwargs)
-
-    def create(self, validated_data):
-        """Create the comment."""
-        uploaded_files = validated_data.pop('uploaded_files', None)
-        comment = Comment.objects.create(**validated_data)
-        if uploaded_files:
-            for file in uploaded_files:
-                FileComment.objects.create(
-                    comment=comment,
-                    file=file
-                )
-        return comment
-
-
-class FileDisputeSerializer(serializers.ModelSerializer):
-    """Serializer for the File in dispute."""
+class BaseFileSerializer(serializers.ModelSerializer):
+    """Base serializer for the File"""
 
     size = serializers.SerializerMethodField()
     filename = serializers.SerializerMethodField()
@@ -90,8 +36,7 @@ class FileDisputeSerializer(serializers.ModelSerializer):
     MAX_FILENAME_LENGTH = 50
 
     class Meta:
-        model = FileDispute
-        fields = "__all__"
+        abstract = True
 
     def get_size(self, obj):
         """Calculate the size in bytes."""
@@ -156,6 +101,69 @@ class FileDisputeSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data['file'] = unquote(data['file'])
         return data
+
+
+class FileCommentSerializer(BaseFileSerializer):
+    """Serializer for the File in comment."""
+
+    class Meta:
+        model = FileComment
+        fields = "__all__"
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    """Serializer for the Comment model."""
+
+    file = FileCommentSerializer(many=True, read_only=True)
+    uploaded_files = serializers.ListField(
+        child=serializers.FileField(allow_empty_file=False, use_url=False),
+        write_only=True,
+        required=False
+    )
+    sender = CustomUserSerializer(read_only=True)
+
+    class Meta:
+        """
+        Meta class for CommentSerializer.
+
+        Attributes:
+            model: The Comment model class to be serialized.
+            fields: A string indicating to include all fields
+            from the Comment model.
+        """
+
+        model = Comment
+        fields = ('id', 'sender', 'file', 'uploaded_files',
+                  'content', 'dispute', 'created_at')
+        read_only_fields = ('sender', 'dispute', 'created_at')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'request' in self.context:
+            method = self.context['request'].method
+            if method in SAFE_METHODS:
+                self.fields['sender'] = CustomUserSerializer(read_only=True)
+        super().__init__(*args, **kwargs)
+
+    def create(self, validated_data):
+        """Create the comment."""
+        uploaded_files = validated_data.pop('uploaded_files', None)
+        comment = Comment.objects.create(**validated_data)
+        if uploaded_files:
+            for file in uploaded_files:
+                FileComment.objects.create(
+                    comment=comment,
+                    file=file
+                )
+        return comment
+
+
+class FileDisputeSerializer(BaseFileSerializer):
+    """Serializer for the File in dispute."""
+
+    class Meta:
+        model = FileDispute
+        fields = "__all__"
 
 
 class DisputeSerializer(serializers.ModelSerializer):
