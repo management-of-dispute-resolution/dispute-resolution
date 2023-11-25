@@ -84,7 +84,7 @@ class Comment(BaseModel):
     )
     content = models.TextField(
         verbose_name='Описание',
-        validators=[text_validator()],
+        validators=[MinLengthValidator(MIN_LENGTH), text_validator()],
         max_length=MAX_LENGTH)
     dispute = models.ForeignKey(
         Dispute,
