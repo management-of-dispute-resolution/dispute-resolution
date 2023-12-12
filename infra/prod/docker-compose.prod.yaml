@@ -1,5 +1,5 @@
 
-version: '3.7'
+version: '3.8'
 
 services:
   db:
@@ -10,6 +10,7 @@ services:
       - "5432:5432"
     env_file:
       - ../../.env
+
   backend:
     build: ../../.
     restart: always
@@ -20,6 +21,7 @@ services:
       - db
     env_file:
       - ../../.env
+
   frontend:
     build:
       context: ../../../dispute_resolution_frontend
@@ -28,20 +30,18 @@ services:
       - ../../../dispute_resolution_frontend/:/app/result_build/
     depends_on:
       - backend
+
   nginx:
     image: nginx:1.21.3-alpine
-
     ports:
       - "80:80"
       - "443:443"
-
     volumes:
       - /etc/letsencrypt/:/etc/letsencrypt/
       - ../../../dispute_resolution_frontend/build:/usr/share/nginx/html/
       - ./nginx.prod.conf:/etc/nginx/conf.d/default.conf
       - static_value:/var/html/static/
       - media_value:/var/html/media/
-
     depends_on:
       - backend
 

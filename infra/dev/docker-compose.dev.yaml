@@ -9,6 +9,7 @@ services:
       - "5432:5432"
     env_file:
       - ../../.env
+
   backend:
     build: ../../.
     restart: always
@@ -19,17 +20,15 @@ services:
       - db
     env_file:
       - ../../.env
+
   nginx:
     image: nginx:1.21.3-alpine
-
     ports:
       - "80:80"
-
     volumes:
       - ./nginx.dev.conf:/etc/nginx/conf.d/default.conf
       - static_value:/var/html/static/
       - media_value:/var/html/media/
-
     depends_on:
       - backend
 
