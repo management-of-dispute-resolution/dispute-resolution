@@ -3,10 +3,10 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin,
 )
-from django.core.validators import RegexValidator
 from django.db import models
 
 from config.settings import USER_FIELD
+from users.validators import phone_number_validator
 
 
 class CustomUserManager(BaseUserManager):
@@ -135,14 +135,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name='Фамилия', max_length=USER_FIELD
     )
     phone_number = models.CharField(
-        max_length=12,
+        max_length=16,
         unique=True,
-        validators=[
-            RegexValidator(
-                regex=r'^\d+$',
-                message='Номер телефона может состоять только из цифр',
-            )
-        ],
+        validators=[phone_number_validator()],
     )
     role = models.CharField(
         verbose_name='Роль',

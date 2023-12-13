@@ -45,6 +45,7 @@ MIDDLEWARE = [
     'api.custom_middleware.PreventRegistrationMiddleware',
 ]
 
+
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
@@ -91,12 +92,18 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    {
+        'NAME': 'api.validators.UniquePasswordValidator',
+    },
+    {
+        'NAME': 'api.validators.MaximumLengthValidator',
+    }
 ]
 
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -112,6 +119,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 USER_FIELD = 100
+MIN_LENGTH = 25
+MAX_LENGTH = 1000
 
 # User
 
@@ -128,7 +137,9 @@ SWAGGER_SETTINGS = {
     'is_authenticated': False,
     'is_superuser': False,
 }
-CSRF_TRUSTED_ORIGINS = ['http://*.localhost', 'http://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['http://*.localhost', 'http://*.127.0.0.1',
+                        'https://*.localhost', 'https://*.127.0.0.1',
+                        'https://*.82.97.241.35', 'https://*.concordia.sytes.net']
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -138,6 +149,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
+
 }
 
 CORS_ORIGIN_ALLOW_ALL = True

@@ -1,5 +1,9 @@
+import os
+from urllib.parse import unquote
+
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
+from rest_framework.permissions import SAFE_METHODS
 
 from disputes.models import Comment, Dispute, FileComment, FileDispute
 from users.models import CustomUser
@@ -23,7 +27,83 @@ class CustomUserSerializer(UserSerializer):
                   'last_name', 'phone_number', 'role']
 
 
-class FileCommentSerializer(serializers.ModelSerializer):
+class BaseFileSerializer(serializers.ModelSerializer):
+    """Base serializer for the File"""
+
+    size = serializers.SerializerMethodField()
+    filename = serializers.SerializerMethodField()
+    file = serializers.FileField()
+    MAX_FILENAME_LENGTH = 50
+
+    class Meta:
+        abstract = True
+
+    def get_size(self, obj):
+        """Calculate the size in bytes."""
+        if obj.file:
+            file_path = obj.file.path
+            if os.path.exists(file_path):
+                size_bytes = os.path.getsize(file_path)
+                return size_bytes
+        return 0
+
+    def get_filename(self, obj):
+        """Remove unreadbale characters in filename.
+
+        Example:
+        Before - hot_dog_KXxIrPe.jpg
+        After - hot_dog.jpg",
+        """
+        if obj.file:
+            filename = obj.file.name
+
+            # Remove the directory path
+            parts = filename.split('/')
+            if parts:
+                # Get the last part, which is the filename
+                filename = parts[-1]
+
+                # Remove the last part of the filename
+                parts = filename.split('_')
+                if len(parts) >= 2:
+                    # If there are at least two parts,
+                    # join all except the last part
+                    return '_'.join(parts[:-1])
+                else:
+                    # If there's only one part, return the whole filename
+                    return filename
+
+            return filename  # Return the modified filename
+
+        return ""
+
+    def to_representation(self, instance):
+        """
+        Modify the representation of the serialized data.
+
+        This method decodes the 'file' field to convert
+        percent-encoded characters
+        back to readable characters
+        with support for Cyrillic.
+
+        Args:
+            instance: The instance being serialized.
+
+        Returns:
+            dict: A modified representation of the serialized data.
+
+        Example:
+        Before - "http://127.0.0.1:8000/media/
+        uploads/%D0%91%D0%BE%D1%80%D1%89.jpg"
+
+        After -  "http://127.0.0.1:8000/media/uploads/Борщ.jpg"
+        """
+        data = super().to_representation(instance)
+        data['file'] = unquote(data['file'])
+        return data
+
+
+class FileCommentSerializer(BaseFileSerializer):
     """Serializer for the File in comment."""
 
     class Meta:
@@ -40,6 +120,7 @@ class CommentSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False
     )
+    sender = CustomUserSerializer(read_only=True)
 
     class Meta:
         """
@@ -56,6 +137,14 @@ class CommentSerializer(serializers.ModelSerializer):
                   'content', 'dispute', 'created_at')
         read_only_fields = ('sender', 'dispute', 'created_at')
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'request' in self.context:
+            method = self.context['request'].method
+            if method in SAFE_METHODS:
+                self.fields['sender'] = CustomUserSerializer(read_only=True)
+        super().__init__(*args, **kwargs)
+
     def create(self, validated_data):
         """Create the comment."""
         uploaded_files = validated_data.pop('uploaded_files', None)
@@ -69,7 +158,7 @@ class CommentSerializer(serializers.ModelSerializer):
         return comment
 
 
-class FileDisputeSerializer(serializers.ModelSerializer):
+class FileDisputeSerializer(BaseFileSerializer):
     """Serializer for the File in dispute."""
 
     class Meta:
@@ -82,6 +171,7 @@ class DisputeSerializer(serializers.ModelSerializer):
 
     last_comment = serializers.SerializerMethodField()
     file = FileDisputeSerializer(many=True, read_only=True)
+
     uploaded_files = serializers.ListField(
         child=serializers.FileField(allow_empty_file=False, use_url=False),
         write_only=True,
@@ -119,11 +209,20 @@ class DisputeSerializer(serializers.ModelSerializer):
             'created_at',
             'closed_at',
             'status',
-            'add_opponent'
+            'add_opponent',
             'status',
             'comments',
             'last_comment',
         )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'request' in self.context:
+            method = self.context['request'].method
+            if method in SAFE_METHODS:
+                self.fields['creator'] = CustomUserSerializer(read_only=True)
+                self.fields['opponent'] = CustomUserSerializer(many=True)
+        super().__init__(*args, **kwargs)
 
     def get_last_comment(self, obj):
         """Get the last comment."""
